@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { FoodMenuPagination, ToggleAvailability } from './model/food-menu.payload';
+import { BlogPagination, BlogReactionPayload, FoodMenuPagination, ToggleAvailability } from './model/food-menu.payload';
 import { PaginatedData } from 'src/app/constant/data/pagination/pagination.model';
-import { FoodMenuWithImageData, foodMenu } from './model/food-menu.model';
+import { Blog, FoodMenuWithImageData, foodMenu } from './model/food-menu.model';
 import { ResponseData } from 'src/app/constant/data/response-data.model';
 import { BehaviorSubject, catchError, finalize } from 'rxjs';
 import { LoaderService } from 'src/app/shared/service/loader-service/loader.service';
@@ -13,10 +13,9 @@ import { ServiceCommonVariable } from 'src/app/shared/helper/inherit/common-vari
 import { EnumItem } from '@shared/model/enums/MapForEnum.model';
 
 export enum FoodFilterHomepageType {
-  ALL = 'All',
-  MEAL = 'Meal',
-  DRINKS = 'Drinks',
-  MISC = 'Misc'
+  RECENT = 'Recent',
+  RANDOM = 'Random',
+  POPULAR = 'Popular',
 }
 export enum FoodFilterType {
   ALL = 'All',
@@ -33,9 +32,9 @@ export class ManageFoodsService extends ServiceCommonVariable {
 
   filterOptionsHomepage : EnumItem[] = this.enumToEnumItems(FoodFilterHomepageType)
   filterOptions : EnumItem[] = this.enumToEnumItems(FoodFilterType)
-  defaltFoodSelect : string = 'ALL'
+  defaltFoodSelect : string = 'RECENT'
   backendUrl = environment.apiUrl;
-  moduleName : string = "food-menu"
+  moduleName : string = "blog"
   private selectedMenuSubject = new BehaviorSubject<FoodMenuWithImageData | null>(null);
 pictureLoading = false
 deleteLoading = false
@@ -88,22 +87,7 @@ public toggleLoading = {
   getFoodMenu(){
      return this.httpClient.get<ResponseData<foodMenu[]>>(this.backendUrl + "food-menu" + "?type=ALL");
   }
-  getFoodMenuPaginated(data : FoodMenuPagination){
-    // this.loaderService.showLoading()
-    this.loading = true
-     return this.httpClient.post<ResponseData<PaginatedData<foodMenu>>>(this.backendUrl + this.moduleName +  "/pageable", data)
-     .pipe(
-      // catchError(error => {
-      //   this.loading = false
-      //   throw error;
-      // }),
-      // finalize(() => this.loading=false
-      // )
-      this.handleError()
-      );
-   
-  }
-
+  
   getFoodPicture(id: number) {
     return this.httpClient.get(this.backendUrl +'food-menu/photo/' + id, { responseType: 'blob' });
   }
@@ -127,6 +111,30 @@ public toggleLoading = {
 
   getSelectedFoodMenu(){
     return this.selectedMenuSubject.asObservable();
+  }
+
+
+
+
+
+
+
+
+
+
+  ////
+  getBlogPaginated(data : BlogPagination){
+    this.loading = true
+     return this.httpClient.post<ResponseData<PaginatedData<Blog>>>(this.backendUrl + this.moduleName +  "/paginated", data)
+     .pipe(
+      
+      this.handleError()
+      );
+   
+  }
+
+  reactBlog(data: BlogReactionPayload){
+    return this.httpClient.post<ResponseData<any>>(this.backendUrl + this.moduleName +  "/react", data)
   }
  
 

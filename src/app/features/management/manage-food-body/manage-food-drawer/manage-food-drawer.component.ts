@@ -29,7 +29,7 @@ export class ManageFoodDrawerComponent extends CommonVariable implements OnInit,
     }
 
     ngOnInit(): void {
-      this.userRole = this.userService.getSingleRole()
+      this.userRole = this.userService.getSingleRole()!
 
       if(this.userRole == 'STAFF'){
         this.selectedNavbar =   this.feedbackIndex;

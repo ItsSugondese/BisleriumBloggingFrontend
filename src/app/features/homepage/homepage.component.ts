@@ -13,7 +13,9 @@ import { UserRouteConstant } from 'src/app/constant/routing/user-routing-constan
 import { UserOrderHistory } from '../user-order/user-order-service/model/user-order.model';
 import { ManageFoodsService } from '../management/manage-food-body/manage-foods/manage-foods-service/manage-foods.service';
 import { CommonVariable } from '@shared/helper/inherit/common-variable';
-import { FoodMenuPagination } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.payload';
+import { BlogPagination, BlogReactionPayload, FoodMenuPagination } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.payload';
+import { Blog } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.model';
+import { ManageStaffService } from '../management/people-management/manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
 
 
 
@@ -24,35 +26,19 @@ import { FoodMenuPagination } from '../management/manage-food-body/manage-foods/
 })
 export class HomepageComponent extends CommonVariable implements OnInit, OnDestroy, AfterViewInit {
   foodMenuFetch$ !: Subscription
-  getFoodPicture$ !: Subscription
-  foodMenuList !: foodMenu[]
-  imageDataMap: { [key: number]: string } = {};
-  selectedFoodMenu !: foodMenu;
-  selectedImageDataMap !: string
+  getUserPicture$ !: Subscription
+  reactBlog$ !: Subscription
+  foodMenuList !: Blog[]
+  imageDataMap: { [key: string]: string } = {};
 
-  finalPopUp = false;
-  quantity ?:number;
 
-  isOrderSuccessful = false;
+  blogPagination !: BlogPagination
 
-  quantityControl = new FormControl(1, Validators.min(1));
-  foodOrderList: foodOrdering[] = []
-  removeFoodOrderList: number[] = []
-
-  orderCode !: number;
-  orderHistory ?: UserOrderHistory
-  arrivalTime : string = '';
-  @ViewChild('quantityInput') quantityInput !: ElementRef;
-  selectedFoodMenuType : string | null = "ALL"
-  foodMenuPagination : FoodMenuPagination = {
-    page: 1,
-    row: 10,
-    filter:  true
-  }
+  reactionPayload !: BlogReactionPayload
   
   constructor(public homepageService: HomepageService,
     public foodService: ManageFoodsService, private userOrderService: UserOrderService,
-    private router: Router
+    private router: Router, private staffService: ManageStaffService
   ) {
 super()
   }
@@ -63,49 +49,29 @@ super()
   }
 
   ngOnInit(): void {
-    this.orderHistory = this.userOrderService.getOrderedMade();
-    if(this.orderHistory != null){
-      this.arrivalTime = this.orderHistory.arrivalTime24
-      this.orderHistory.orderFoodDetails.map(
-        e => {
-          this.foodOrderList.push({
-            id :  e.id,
-      quantity : e.quantity,
-      imageSrc : this.imageDataMap[e.id],
-      selectedFoodMenu : e.foodMenu
-          })
-      })
+    this.blogPagination = {
+      page: 1,
+      row: 10,
+sort: this.foodService.defaltFoodSelect,
+      name:  ''
     }
-
-
-    if(this.foodOrderList.length > 0){
-      this.comingToEdit = true;
-      this.visible= true;
-    }
-
-    this.getFoodMenu();
   }
 
   public getFoodMenu(){
-    if(this.selectedFoodMenuType == 'ALL'){
-      this.foodMenuPagination.foodType = undefined
-    }else{
-    this.foodMenuPagination.foodType = this.selectedFoodMenuType
-    }
     
-    this.foodMenuFetch$ = this.foodService.getFoodMenuPaginated(this.foodMenuPagination).subscribe(
+    this.foodMenuFetch$ = this.foodService.getBlogPaginated(this.blogPagination).subscribe(
       (response ) => {
         
         this.foodMenuList = response.data.content;
 
         this.foodMenuList.forEach((menu) => {
-          if(menu.photoId){
-            this.getFoodPicture$ = this.foodService.getFoodPicture(menu.photoId).subscribe((imageBlob: Blob) => {
+          if(menu.userProfile){
+            this.getUserPicture$ = this.staffService.getUserPicture(menu.userId).subscribe((imageBlob: Blob) => {
 
 
-            createImageFromBlob(imageBlob, menu.photoId)
+            createImageFromBlob(imageBlob, menu.id)
              .then((imageData) => {
-              this.imageDataMap[menu.photoId] = imageData;
+              this.imageDataMap[menu.userId] = imageData;
               
           })
           .catch((error) => {
@@ -119,214 +85,80 @@ super()
   }
 
   selectedFromFoodFilter(event: string | null){
-    this.selectedFoodMenuType = event
+    this.blogPagination.sort = event!
     this.getFoodMenu()
   }
 
-  cancelEdit(){
-    this.comingToEdit = false;
-    this.navigateToUserOrder()
-  }
+  react(reactionType: boolean, blogPayload: Blog, index : number){
+    const tempLoad = blogPayload.hasReacted
+    const tempScore = blogPayload.score
+    const payload : BlogReactionPayload = {
+      blogId: blogPayload.id,
+      reaction: reactionType? 'UPVOTE' : 'DOWNVOTE'
+    }
+    if(reactionType == blogPayload.hasReacted){
+      this.foodMenuList[index].hasReacted = null
+      if(reactionType){
+        this.foodMenuList[index].score -= 2
+      }else{
+        this.foodMenuList[index].score += 1
 
-  selectedNum = 1;
-  foodFilter  = FoodFilter
-  selectOption(id: number) {
-    this.selectedNum = id
-    console.log(this.selectedNum)
-  }
-
-  visible: boolean = false;
-  position: any = 'top-right';
-
-
-  
-
-  comingToEdit: boolean = false;
-  
-  
-  
-  //actions effecting dialog
-  toogleVisibility() {
-    this.visible = !this.visible;
-  }
-
-  selectedOrder(menu: foodMenu, quantity: number) {
-    this.togglePopUp();
-    let found = false;
-    for (let i = 0; i < this.foodOrderList.length; i++) {
-      if (this.foodOrderList[i].selectedFoodMenu.id === menu.id) {
-        found = true;
-        this.foodOrderList[i].quantity = quantity;
-        break;
       }
-    }
-
-    
-
-    if (!found) {
-      this.foodOrderList.push({
-        quantity: quantity,
-        imageSrc : this.imageDataMap[menu.photoId],
-        selectedFoodMenu : menu
-      })
-    }
-  }
-
-  removeOrderItem(i : number, location : string){
-    if(this.comingToEdit){
-      const id = this.foodMenuList[i].id
-      if(id != null){
-      this.removeFoodOrderList.push(this.orderHistory?.orderFoodDetails[i].id!)
-      }
-    }
-    this.foodOrderList.splice(i,1);
-    if(location.toUpperCase() === 'finalOrder'.toUpperCase()){
-      if(this.foodOrderList.length < 1){
-        this.finalPopUp = !this.finalPopUp
-      }
-    }
-
-    
-  }
-  
-  
-  //action effecting first modal
-  togglePopUp() {
-    this.showPopUp = !this.showPopUp
-    if (!this.showPopUp) {
-      this.quantity = 0
-    }
-    if (!this.visible) {
-      this.toogleVisibility();
-    }
-  }
-  
-  orderPopUp(foodMenu: foodMenu) {
-    this.togglePopUp();
-
-    console.log(this.showPopUp)
-    if (this.showPopUp) {
-      this.selectedFoodMenu = foodMenu;
-      this.selectedImageDataMap = this.imageDataMap[foodMenu.photoId];
-      this.visible = false;
-    } else {
-      this.visible = true;
-    }
-  }
-
-  //action effecting last modal
-  toggleFinalPopUp() {
-    this.finalPopUp = !this.finalPopUp
-
-    if (!this.visible) {
-      this.toogleVisibility();
-    }
-  }
-
-  orderItemScreen(orderList : foodOrdering[]) {
-    this.toggleFinalPopUp();
-    
-    if (this.finalPopUp) {
-      this.visible = false;
-    } else {
-      this.visible = true;
-    }
-  }
-
-  onEnterPress(event: any, i : number) {
-    this.quantityInput.nativeElement.blur();
-    if ((event.target.value) > 0) {
-      this.foodOrderList[i].quantity = event.target.value
     }else{
-      this.foodOrderList[i].quantity =  1
+      console.log(blogPayload.hasReacted)
+      this.foodMenuList[index].hasReacted = reactionType
+      if(tempLoad == null){
+      if(reactionType){
+        this.foodMenuList[index].score += 2
+      }else{
+        this.foodMenuList[index].score -= 1
+      }
+    }else{
+      if(reactionType){
+        this.foodMenuList[index].score += 3
+      }else{
+        this.foodMenuList[index].score -= 3
+      }
+
     }
-  }
-  onInputBlur(i : number){
-    if(this.foodOrderList[i].quantity ==0){
-      this.foodOrderList[i].quantity = 1
     }
+    this.reactBlog$ = this.foodService.reactBlog(payload).subscribe(
+      (res) => {
+
+      },
+      (onErr) => {
+      this.foodMenuList[index].hasReacted = tempLoad
+      this.foodMenuList[index].score = tempScore
+      }
+    )
   }
+
+  onRangeSelect(event: Date[]) {
+    const fromDate = event[0];
+    const toDate = event[event.length - 1];
+
+    const fromDateString = fromDate.getFullYear() + '-' + ('0' + (fromDate.getMonth() + 1)).slice(-2) + '-' + ('0' + fromDate.getDate()).slice(-2);
+      const toDateString = toDate.getFullYear() + '-' + ('0' + (toDate.getMonth() + 1)).slice(-2) + '-' + ('0' + toDate.getDate()).slice(-2);
+    this.blogPagination.fromDate = fromDateString
+    this.blogPagination.toDate = toDateString
+
+    this.getFoodMenu()
+}
+
+typedOrderToFilter(event: string){
+    this.blogPagination.name = event
   
-  getOneReturn(i : number){
-    return this.foodOrderList[i].quantity = 1;
-  }
-
-  //hitting backend
-  postOrder(order : foodOrdering[], time : string){
-
-
-    let foodList : foodOrderPayload[] = [] 
-    let totalPrice = 0
-    order.forEach(e => { 
-      totalPrice += e.selectedFoodMenu.cost * e.quantity;
-       foodList.push({
-      id:  e.id!,
-      foodId : e.selectedFoodMenu.id,
-      quantity : e.quantity 
-    })
-  }
-    )
-    let orderPayload : onlineOrderPayload = {
-      id: this.orderHistory != null ? this.orderHistory.id : null,
-      arrivalTime : time,
-      foodOrderList : foodList,
-      removeFoodId : this.removeFoodOrderList,
-      totalPrice : totalPrice
-    }
-    this.homepageService.postOnlineOrder(orderPayload).subscribe(
-      (response) => {
-        if(response.status == true){
-          this.orderCode = response.data.orderCode
-          this.isOrderSuccessful = true
-        }
-      }
-    )
-  }
+  this.getFoodMenu();
+}
 
 
 
-  reloadPage(){
-    // window.location.reload()
-    const modal = document.getElementById('finalPopUpModal'); // Replace 'your-modal-id' with the actual ID of your modal
-      if (modal) {
-        modal.classList.remove('show');
-        modal.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        const modalBackdrop = document.getElementsByClassName('modal-backdrop');
-        for (let i = 0; i < modalBackdrop.length; i++) {
-          document.body.removeChild(modalBackdrop[i]);
-        }
-      }
-    this.navigateToUserOrder()
 
-  }
 
-  navigateToUserOrder(){
-    this.router.navigate(['/' + UserRouteConstant.userOrder])
+ 
 
-  }
-  //others
-  loadFoodMenusAndImage() {
-    return this.homepageService.getFoodMenu().subscribe(
-      (response) => {
-        this.foodMenuList = response.data;
-        console.log(this.foodMenuList)
-        this.foodMenuList.forEach((foodMenu) => {
-          if (foodMenu.photoId) {
-            this.getFoodPicture$ = this.foodService.getFoodPicture(foodMenu.photoId).subscribe((imageBlob: Blob) => {
-              createImageFromBlob(imageBlob, foodMenu.photoId)
-                .then((imageData) => {
-                  this.imageDataMap[foodMenu.photoId] = imageData;
-                })
-                .catch((error) => {
-                  console.log("error when trying to access")
-                });
-            });
-          }
-        });
-      }
-    )
-  }
+
+
 
 
   ngOnDestroy(): void {
@@ -334,9 +166,6 @@ super()
       this.foodMenuFetch$.unsubscribe();
     }
 
-    this.comingToEdit = false
-    // this.reloadPage()
-    this.userOrderService.orderMade = undefined
     console.log("Here")
     
     

@@ -30,7 +30,7 @@ import { FeaturesLayoutComponent } from './layouts/features-layout/features-layo
 import { UserLayoutComponent } from './layouts/user-layout/user-layout.component';
 
 const routes: Routes = [
-  {path : '', redirectTo: '/auth/login', pathMatch: 'full'},
+  {path : '', redirectTo: '/_', pathMatch: 'full'},
   {
     path: '',
     component: LoginLayoutComponent,

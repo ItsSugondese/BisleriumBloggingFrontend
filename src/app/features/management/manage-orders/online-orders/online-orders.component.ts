@@ -242,46 +242,46 @@ export class OnlineOrdersComponent extends OrderCommonVariable implements OnInit
 
   getFoodMenu() {
 
-    this.foodMenuFetch$ = this.foodService.getFoodMenuPaginated(this.foodMenuPagination).subscribe(
-      (response) => {
-        let foodMenuPaginated: PaginatedData<foodMenu> = response.data;
+    // this.foodMenuFetch$ = this.foodService.getBlogPaginated(this.foodMenuPagination).subscribe(
+    //   (response) => {
+    //     let foodMenuPaginated: PaginatedData<foodMenu> = response.data;
 
-        let menu = foodMenuPaginated.content
-        for (let i = 0; i < menu.length; i++) {
-          if (menu[i].photoId) {
-            this.getFoodPicture$ = this.foodService.getFoodPicture(menu[i].photoId).subscribe((imageBlob: Blob) => {
+    //     let menu = foodMenuPaginated.content
+    //     for (let i = 0; i < menu.length; i++) {
+    //       if (menu[i].photoId) {
+    //         this.getFoodPicture$ = this.foodService.getFoodPicture(menu[i].photoId).subscribe((imageBlob: Blob) => {
 
 
-              this.createImageFromBlob(imageBlob, menu[i].photoId)
-                .then((imageData) => {
-                  this.foodImageDataMap[menu[i].photoId] = imageData;
-                  if (i == menu.length - 1) {
-                    this.suggestions = response.data.content.map((item: foodMenu) => ({
-                      name: item.name,
-                      photo: this.foodImageDataMap[item.photoId],
-                      id: item.id,
-                      price: item.cost
-                    }));
-                  }
+    //           this.createImageFromBlob(imageBlob, menu[i].photoId)
+    //             .then((imageData) => {
+    //               this.foodImageDataMap[menu[i].photoId] = imageData;
+    //               if (i == menu.length - 1) {
+    //                 this.suggestions = response.data.content.map((item: foodMenu) => ({
+    //                   name: item.name,
+    //                   photo: this.foodImageDataMap[item.photoId],
+    //                   id: item.id,
+    //                   price: item.cost
+    //                 }));
+    //               }
 
-                })
-                .catch((error) => {
-                  console.log("error when trying to access")
-                });
-            });
-          } else {
-            if (i == menu.length - 1) {
-              this.suggestions = response.data.content.map((item: foodMenu) => ({
-                name: item.name,
-                photo: this.foodImageDataMap[item.photoId],
-                id: item.id
-              }));
-            }
-          }
+    //             })
+    //             .catch((error) => {
+    //               console.log("error when trying to access")
+    //             });
+    //         });
+    //       } else {
+    //         if (i == menu.length - 1) {
+    //           this.suggestions = response.data.content.map((item: foodMenu) => ({
+    //             name: item.name,
+    //             photo: this.foodImageDataMap[item.photoId],
+    //             id: item.id
+    //           }));
+    //         }
+    //       }
 
-        }
-      }
-    )
+    //     }
+    //   }
+    // )
   }
 
   convertTimeTo24HourFormat(time: string): string {

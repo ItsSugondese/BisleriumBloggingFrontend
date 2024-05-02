@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Table, TableAddPayload } from './table-management-service/model/table.model';
 import { ResponseData } from 'src/app/constant/data/response-data.model';
 import { Observable, Subscription } from 'rxjs';
@@ -10,12 +10,14 @@ import { CommonVariable } from '@shared/helper/inherit/common-variable';
   templateUrl: './table-management.component.html',
   styleUrls: ['./table-management.component.scss']
 })
-export class TableManagementComponent extends CommonVariable implements OnInit {
+export class TableManagementComponent extends CommonVariable implements OnInit, OnDestroy {
 
   visible : boolean = false;
   qrVisible : boolean = false;
   deleteVisible : boolean = false;
-  tablesSubscription$ !: Observable<ResponseData<Table[]>>
+  // tablesSubscription$ !: Observable<ResponseData<Table[]>>
+  tableData !: Table[]
+  tablesSubscription$ !: Subscription
   tableQrSubscription$ !: Subscription
   tableDeleteSubscription$ !: Subscription
   tableAddSubscription$ !: Subscription
@@ -32,8 +34,11 @@ export class TableManagementComponent extends CommonVariable implements OnInit {
   }
   
   fetchTable(){
-    
-    this.tablesSubscription$ = this.tableService.getAllTables();
+    this.tablesSubscription$ = this.tableService.getAllTables().subscribe(
+      (res) => {
+        this.tableData = res.data
+      }
+    );
   }
 
   selectingTable(item: Table){
@@ -106,6 +111,12 @@ export class TableManagementComponent extends CommonVariable implements OnInit {
 
     // Clean up
     URL.revokeObjectURL(url);
+  }
+
+  ngOnDestroy(): void {
+      if(this.tablesSubscription$){
+        this.tablesSubscription$.unsubscribe()
+      }
   }
 
 

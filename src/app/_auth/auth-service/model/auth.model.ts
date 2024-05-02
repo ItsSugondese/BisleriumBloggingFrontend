@@ -12,6 +12,6 @@ export interface ChangePassword{
 }
 
 export interface LoginModel{
-    userEmail: string;
-    userPassword: string;
+    email: string;
+    password: string;
 }

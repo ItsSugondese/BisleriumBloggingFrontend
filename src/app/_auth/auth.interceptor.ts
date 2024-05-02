@@ -38,7 +38,6 @@ export class AuthInterceptor implements HttpInterceptor, OnInit {
         return next.handle(req).pipe(
             
             catchError(
-
                 (err: HttpErrorResponse) => {
                     if (err.error.message) {
                         this.snackService.showMessage({
@@ -54,7 +53,7 @@ export class AuthInterceptor implements HttpInterceptor, OnInit {
                         }
                         this.router.navigate(['/login'])
                     } else if (err.status == 403) {
-                        this.router.navigate(['/forbidden'])
+                        this.router.navigate(['/auth/login'])
                     } else if (err.status == 0) {
                         this.snackService.showMessage({
                             label: "Connection with server failed",
@@ -66,7 +65,7 @@ export class AuthInterceptor implements HttpInterceptor, OnInit {
                             status: MessageStatus.FAIL
                         });
                     }
-                    return throwError("Something is wrong")
+                    return throwError(err)
                 }
             ),
             map(event => {

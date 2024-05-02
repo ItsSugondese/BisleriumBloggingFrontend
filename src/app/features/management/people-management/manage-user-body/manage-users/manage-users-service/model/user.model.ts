@@ -2,7 +2,7 @@ export interface User {
     accountNonLocked: boolean;
     email: string;
     profilePath: string;
-    id: number;
+    id: any;
     fullName: string;
     userType : string;
     isExternal: boolean;

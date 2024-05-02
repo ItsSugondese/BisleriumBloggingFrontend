@@ -88,19 +88,13 @@
             </td>
             <td style="">
                 <div class="flex justify-center ">
-                    <div *ngIf="user.isExternal; else isInternal">
+                    <div >
                         <mat-icon class="hover:cursor-pointer h-full
             hover:text-customPrimary"
                             style="font-size: 18px; display: flex; align-items: center; justify-content: center;"
                             (click)="onOpeningDrawer.emit(true); this.sendUserId.emit(user);"
                             [class.text-gray-600]="!user.isExternal">edit</mat-icon>
                         </div>
-                        <ng-template #isInternal>
-                        <mat-icon class=" h-full"
-                            style="font-size: 18px; display: flex; align-items: center; justify-content: center;"
-                            [class.text-gray-600]="!user.isExternal">edit_off</mat-icon>
-
-                    </ng-template>
                     <div>
                         <mat-icon class="hover:cursor-pointer h-full
             hover:text-customPrimary"

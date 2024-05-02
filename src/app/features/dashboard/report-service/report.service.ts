@@ -27,7 +27,7 @@ export class ReportService {
   }
  
   getRevenueData(payload: RevenueDataPayload){
-    return this.httpClient.post(`${this.backendUrl}${this.moduleName}/revenue/`, payload, {
+    return this.httpClient.post(`${this.backendUrl}${this.moduleName}/revenue`, payload, {
       responseType: 'blob' // Set responseType to 'blob' to handle binary data
     })
   }

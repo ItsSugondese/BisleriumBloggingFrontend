@@ -24,26 +24,29 @@ import { OrderHistoryComponent } from './order-history/order-history.component';
 import { UserManagementPaymentComponent } from './management/people-management/user-management-payment/user-management-payment.component';
 import { InventoryManagementAdminComponent } from './management/inventory/inventory-management-admin/inventory-management-admin.component';
 import { InventoryManagementBodyComponent } from './management/inventory/inventory-management-body/inventory-management-body.component';
+import { ForbiddenComponent } from '../_auth/forbidden/forbidden.component';
 
 const routes: Routes = [
   {path: ManagementRouteConstant.foodManagement, component: ManageFoodBodyComponent,  
     // data: {roles:['ADMIN']}
+    canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}
   },
-  {path: ManagementRouteConstant.staffManagement, component : ManageStaffBodyComponent,},
-  {path: ManagementRouteConstant.inventoryManagement, component : InventoryManagementBodyComponent,},
-  {path: ManagementRouteConstant.addStaff, component : AddStaffComponent,},
-  {path: ManagementRouteConstant.orderManagement, component: OrderManagementBodyComponent},
-  {path: ManagementRouteConstant.orderHistory, component: OrderHistoryComponent},
-  {path: ManagementRouteConstant.onlineOrderManagement, component: OnlineOrdersComponent},
-  {path: ManagementRouteConstant.onsiteOrderManagement, component: OnsiteOrdersComponent},
-  {path: ManagementRouteConstant.userManagement, component: ManageUserBodyComponent},
-  {path: ManagementRouteConstant.userManagementPayment, component: UserManagementPaymentComponent},
-  {path: ManagementRouteConstant.adminDashboard, component: AdminDashboardComponent},
-  {path: ManagementRouteConstant.staffDashboard, component: StaffDashboardComponent},
-  {path: ManagementRouteConstant.announcement, component: AnnouncementComponent},
-  {path: ManagementRouteConstant.report, component: GenerateReportComponent},
-  {path: ManagementRouteConstant.tableManagement, component: TableManagementBodyComponent},
-  {path: ManagementRouteConstant.test, component: TestComponent}
+  {path: ManagementRouteConstant.staffManagement, component : ManageStaffBodyComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.inventoryManagement, component : InventoryManagementBodyComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
+  {path: ManagementRouteConstant.addStaff, component : AddStaffComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.orderManagement, component: OrderManagementBodyComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
+  {path: ManagementRouteConstant.orderHistory, component: OrderHistoryComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
+  
+  {path: ManagementRouteConstant.onlineOrderManagement, component: OnlineOrdersComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
+  {path: ManagementRouteConstant.onsiteOrderManagement, component: OnsiteOrdersComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
+  {path: ManagementRouteConstant.userManagement, component: ManageUserBodyComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.userManagementPayment, component: UserManagementPaymentComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
+  {path: ManagementRouteConstant.adminDashboard, component: AdminDashboardComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.staffDashboard, component: StaffDashboardComponent, canActivate:[AuthGuard], data: {roles:['Blogger', 'ADMIN']}},
+  {path: ManagementRouteConstant.announcement, component: AnnouncementComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.report, component: GenerateReportComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.tableManagement, component: TableManagementBodyComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.test, component: TestComponent},
 ];
 
 @NgModule({

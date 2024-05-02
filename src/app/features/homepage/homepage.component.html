@@ -8,92 +8,104 @@
       </div>
 
 
-      <div class="filter-header-right flex  items-center">
-        <search-template></search-template>
-      </div>
+      <div class="flex space-x-3">
+        <div class="">
+            <calender-template [dateFilterType]="enumCalenderType.WEEK"
+            (selectedDate)="onRangeSelect($event)"></calender-template>
+        </div>
+          <search-template (typedData)="typedOrderToFilter($event)"></search-template>
+
+    </div>
     </div>
   </div>
+
+ 
+  
+  
   <!-- shows food list -->
   <div *ngIf="foodService.loading; else loaded" [class]="centerItems">
     <mat-spinner style="color: red;"></mat-spinner>
   </div>
 
   <ng-template #loaded>
-  <div fxLayout="row wrap" [fxLayoutGap]="'20px grid'" fxLayoutAlign="" *ngIf="foodMenuList.length > 0">
-    <div fxFlex="1 1 auto" [fxFlex.lg]="'25%'" [fxFlex.xs]="'100%'" [fxFlex.sm]="'50%'" [fxFlex.md]="'33%'"
-     class="card-deck w-1/5 "
-      *ngFor="let item of foodMenuList" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"
-       fxLayout="column" fxLayoutAlign="start center">
+  <div  *ngIf="foodMenuList.length > 0">
+    <ng-container *ngFor="let item of foodMenuList; let i = index">
 
-      <div class="group rounded  w-5/6  bg-white shadow-md hover:cursor-pointer hover:ring-2 hover:ring-blue-500" (click)="orderPopUp(item)">
-        <div class="w-full ">
-          <div >
-            <div
-              class="image-container w-full h-40  object-cover overflow-hidden rounded flex justify-center ">
-              <img [src]="imageDataMap[item.photoId]" class="rounded w-full object-cover">
+      <div class="container  p-4 w-full">
+        <div class="bg-white w-full rounded-lg shadow-md p-6 flex space-x-3">
+          <div class="flex flex-col items-center">
+            <button class="flex items-center space-x-1  "
+        [class.text-orange-500]="item.hasReacted"
+        (click)="react(true, item, i)">
+
+    <i class="fas fa-arrow-up "></i>
+</button>
+          <!-- Total Score -->
+          <span class="text-gray-700 font-bold"
+          [class.text-orange-500]="item.hasReacted"
+          [class.text-red-700]="item.hasReacted != null && !item.hasReacted"
+          > {{item.score}}</span>
+          <!-- Downvote Button -->
+          <button class="flex items-center space-x-1 text-gray-600 "
+          [class.text-red-700]="item.hasReacted != null && !item.hasReacted"
+          (click)="react(false, item, i)">
+              <i class="fas fa-arrow-down"></i>
+          </button>
+          </div>
+          <div class="w-full">
+            <!-- Title -->
+            <div class="flex justify-between items-center mb-4">
+              <h1 class="text-2xl font-bold ">{{item.title}}</h1>
+              <span class="font-semibold">{{item.postedOn}}</span>
             </div>
-            <div class="px-1.5 mt-2">
-            <div class="header flex justify-between  font-bold text-lg group-hover:text-blue-500">
-              <h1 class="">{{item.name}}</h1>
+    
+            <!-- Content -->
+            <div class="mb-6">
+                <p class="text-gray-800">{{item.content}}</p>
             </div>
+    
+            <div class="flex justify-between w-full ">
+            <!-- Author Info -->
+            <div class="flex items-center ">
+                <!-- Author Image -->
+                <img [src]="imageDataMap[item.userId] == null? 'assets/avatar/anon.jpg' : imageDataMap[item.userId]" alt="Author" class="w-8 h-8 rounded-full mr-2">
+    
+                <!-- Author Name -->
+                <span class="text-gray-700">Posted by {{item.username}}</span>
+            </div>
+    
             
-            <div class="description   text-sm line-clamp-2">
-              {{item.description}}
-            </div>
-            <div class="w-full flex items-center text-sm font-semibold mt-2">
-
-
-              <div class="flex w-full  justify-between items-center   pb-3">
-                <div class="cost   font-semibold text-xl">
-                  <h1 class="">{{currency}} {{item.cost}}</h1>
+            <span class="text-gray-700">Comments: <span class="font-bold">{{item.comments}}</span></span>
+          </div>
+           
+        </div>
+        </div>
+    </div>
+      <!-- <div class=" bg-white rounded-xl  px-3 mt-4 py-2">
+        <div class="header flex  justify-between ">
+            <div class="left-header flex ">
+                <div class="image-container mr-1">
+                    <div class="w-12 h-12  rounded-full overflow-hidden">
+                        <img [src]="imageDataMap[item.userId] == null? 'assets/avatar/anon.jpg' : imageDataMap[item.userId]"
+                            alt="Your Image" class="w-full h-full object-cover" />
+                    </div>
                 </div>
-                <text-type-template text="{{item.foodType}}"></text-type-template>
-              </div>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  <!-- <div fxLayout="row wrap" [fxLayoutGap]="'20px grid'" fxLayoutAlign="start" *ngIf="foodMenuList.length > 0">
-    <div fxFlex="1 1 auto" [fxFlex.lg]="'20%'" [fxFlex.xs]="'100%'" [fxFlex.sm]="'50%'" [fxFlex.md]="'33%'" class="card-deck"
-      *ngFor="let item of foodMenuList" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">
-
-      <div class="rounded  w-fit  bg-white">
-        <div class="w-full ">
-          <div class="px-3">
-            <div
-              class="image-container w-56 h-40   p-3 px-0 object-cover overflow-hidden rounded-sm flex justify-center ">
-              <img [src]="imageDataMap[item.photoId]" class="rounded-sm w-full object-cover">
-            </div>
-            <div class="header justify-between  pb-4">
-              <div class=" top-level-header flex justify-between ">
-                <div class="mr-3  font-bold text-3xl   w-full">{{item.name}}</div>
-                <text-type-template [text]="item.foodType"></text-type-template>
+                <div class="feedback-details flex flex-col">
+                    <span class="text-xl font-semibold">{{item.username}}</span>
+                    <span class="text-sm text-black font-extralight">{{item.postedOn}}</span>
+                </div>
             </div>
             
-
-              <h1 class="font-semibold text-xl text-priceColor">Rs. {{item.cost}}</h1>
-            </div>
-
-            <div class=" w-full pb-3">
-
-              <button class="w-full text-center border-re hover:cursor-pointer 
-              bg-white items-center border-2 border-customPrimary
-               text-customPrimary rounded-lg  p-2 text-base" (click)="orderPopUp(item)">
-                View Details</button>
-
-            </div>
-
-
-          </div>
         </div>
-      </div>
 
-    </div>
-  </div> -->
+        <div class="feedback-content  text-base mt-2">
+            {{item.content}}
+        </div>
+    </div> -->
+
+  </ng-container>
+  </div>
+
 
   <div [class]="centerItems" *ngIf="foodMenuList.length == 0">
     <no-content-template></no-content-template>
@@ -104,165 +116,5 @@
 
 
 
-
-
-  <!-- For editing how much of the item we want -->
-  <div class="modal fade" id="exampleModal" data-backdrop="static" data-keyboard="false" [ngClass]="{'show': showPopUp}"
-    *ngIf="selectedFoodMenu">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content p-3 ">
-        <div class="dialog-header flex justify-between items-center">
-          <div class="title-combine">
-            <div class="top-level-header flex items-center">
-              <div class="mr-3 font-semibold text-xl">{{selectedFoodMenu.name}}</div>
-
-              <div class="rounded-lg text-[#1565C0] flex items-center  text-center p-0.5 px-2   text-sm bg-blue-200">
-                <!-- {{item.isPackage ? 'Package' : 'Individual'}} -->
-                {{selectedFoodMenu.foodType}}
-              </div>
-
-            </div>
-          </div>
-          <mat-icon class="text-lg hover:cursor-pointer " (click)="togglePopUp()" data-dismiss="modal">close</mat-icon>
-        </div>
-        <div class="dialog-item-details ">
-          <div class="item-image flex justify-center">
-            <div class="image-container w-full h-40   p-3 px-0 object-cover overflow-hidden rounded-sm flex text-center ">
-              <img [src]="selectedImageDataMap" class="rounded-sm w-full object-cover">
-            </div>
-          </div>
-          
-          <div class="item-description flex flex-col">
-            <span class="text-[#6C757D] text-lg">Description</span>
-            <span class="text-base">
-              {{ selectedFoodMenu.description == null ? selectedFoodMenu.name : selectedFoodMenu.description }}
-            </span>  
-          </div>
-        </div>
-      
-          <form class="my-4">
-            <div class="flex justify-center  ">
-              <div class="text-[#343A40] ">Quantity:</div>
-
-              <input class="ml-4 w-20 border-2 text-center p-0 border-[#CED4DA] focus:border-customPrimary  focus:outline-none" id="quantity" [(ngModel)]="quantity" name="quantity">
-
-            </div>
-            <div class="text-center" *ngIf="quantity">
-              Rs. {{selectedFoodMenu.cost * quantity}}
-            </div>
-          </form>
-   
-        <div class="flex justify-center">
-          <button type="submit" data-dismiss="modal"
-          [ngClass]="{'disabled-button': quantity == null || quantity < 1}" (click)="selectedOrder(selectedFoodMenu, quantity!)"
-          class="text-white bg-customPrimary hover:cursor-pointer  items-center rounded px-2  py-1.5 text-base">Select</button>
-      
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-  <!-- For showing selected items to order -->
-  <p-dialog header="{{comingToEdit? 'Editing' : 'Making'}} Order" [(visible)]="visible" [position]="position"
-    [closable]="false" *ngIf="foodOrderList.length > 0">
-    <ol>
-      <li *ngFor="let item of foodOrderList; let i= index">
-        <div>
-          <span data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"
-            (click)="orderPopUp(item.selectedFoodMenu)"> {{item.selectedFoodMenu.name}} - {{item.quantity}} </span>
-          <button class="btn btn-outline-secondary" type="button" (click)="removeOrderItem(i, 'dialog')">
-            <i class="bi bi-trash-fill"></i>
-          </button>
-        </div>
-      </li>
-    </ol>
-    <div class="space-x-5">
-
-      <clean-button-template text="Order" (clicked)="orderItemScreen(foodOrderList)" data-toggle="modal" data-target="#finalPopUpModal" data-whatever="@mdo"></clean-button-template>
-      <clean-button-template text="Cancel" bg="[#EF4444]" (click)="cancelEdit()" ></clean-button-template>
-    </div>
-    <!-- <button class="btn-danger" type="text" data-toggle="modal" data-target="#finalPopUpModal" data-whatever="@mdo"
-      (click)="orderItemScreen(foodOrderList)"> Order</button>
-    <button class="btn-danger" type="text" data-toggle="modal" data-target="#finalPopUpModal" data-whatever="@mdo"
-      (click)="cancelEdit()" *ngIf="comingToEdit"> Cancel</button> -->
-  </p-dialog>
-
-
-
-
-
-
-  <!-- For ordering at the end with arrival time -->
-  <div class="modal " id="finalPopUpModal" data-backdrop="static" data-keyboard="false" [ngClass]="{'show': finalPopUp}"
-    *ngIf="foodOrderList.length > 0">
-    <div class="modal-dialog hidden" role="document" [ngClass]="{'hidden' : isOrderSuccessful}" style="max-width: 50%;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Order foods</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="toggleFinalPopUp()">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <table id="example" class="table table-striped table-bordered" style="width:100%">
-            <thead>
-              <tr>
-                <th>FoodName</th>
-                <th class="text-center">Quanity Ordered</th>
-                <th>Total Price</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let data of foodOrderList; let i = index">
-                <td>{{data.selectedFoodMenu.name}}</td>
-                <td class="text-center"><input style="width: 50px;" type="number" [(ngModel)]="data.quantity" [ngClass]="{ 'is-invalid': data.quantity<1}"
-                    (keyup.enter)="onEnterPress($event, i)" (blur)="onInputBlur(i)" #quantityInput></td>
-                <td>{{data.selectedFoodMenu.cost * data.quantity}} ({{data.selectedFoodMenu.cost}} each)</td>
-                <td><button class="btn btn-outline-secondary" type="button" data-dismiss="modal"
-                    (click)="removeOrderItem(i, 'finalOrder')">
-                    <i class="bi bi-trash-fill"></i>
-                  </button> </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="flex w-full justify-center space-x-5">
-            <span>Arrival Time: </span>
-            <input type="time" [(ngModel)]="arrivalTime">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <clean-button-template text="Close" bg="[#EF4444]" (click)="toggleFinalPopUp()" data-dismiss="modal"></clean-button-template>
-          <clean-button-template text="Order" (clicked)="postOrder(foodOrderList, arrivalTime)" [isDisabled]="foodOrderList.length < 1 || arrivalTime == '' || homepageService.loading"></clean-button-template>
-          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal"
-            (click)="toggleFinalPopUp()">Close</button>
-          <button type="button" class="btn btn-primary"
-            [ngClass]="{'disabled-button': foodOrderList.length < 1 || arrivalTime == '' || !isPostButtonActive}"
-            (click)="postOrder(foodOrderList, arrivalTime)">Send message</button> -->
-
-
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-dialog " role="document" [ngClass]="{'hidden' : !isOrderSuccessful}">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Order Successful</h5>
-        </div>
-        <div class="modal-body">
-
-          Your order code is <b>{{orderCode}}</b>
-          <br>
-          <button (click)="reloadPage()">Ok</button>
-        </div>
-
-      </div>
-    </div>
-  </div>
 
 

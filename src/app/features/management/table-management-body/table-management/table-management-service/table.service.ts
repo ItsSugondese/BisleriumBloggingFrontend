@@ -15,6 +15,7 @@ export class TableService extends ServiceCommonVariable{
   moduleName : string = "table"
   qrLoading : boolean = false
   deleteLoading : boolean = false
+  getLoading = false;
   constructor(private httpClient: HttpClient) {
     super()
    }
@@ -26,7 +27,14 @@ export class TableService extends ServiceCommonVariable{
      )
    }
   getAllTables(){
+    this.getLoading = true
     return this.httpClient.get<ResponseData<Table[]>>(`${this.backendUrl}${this.moduleName}`)
+    .pipe(
+      catchError(error => {
+        throw error;
+      }),
+      finalize(() => this.getLoading = false)
+    )
   }
 
   getQr(id: number){

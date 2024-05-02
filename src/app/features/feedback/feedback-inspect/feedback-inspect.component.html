@@ -62,12 +62,12 @@
                         <div class="left-header flex ">
                             <div class="image-container mr-1">
                                 <div class="w-12  rounded-full overflow-hidden">
-                                    <img src={{data.userProfileUrl}} alt="Your Image"
+                                    <img [src]="data.isAnonymous ? 'assets/avatar/anon.jpg' : data.userProfileUrl" alt="Your Image"
                                         class="w-full h-full object-cover" />
                                 </div>
                             </div>
                             <div class="feedback-details flex flex-col">
-                                <span class="text-base font-semibold">{{data.username}}</span>
+                                <span class="text-base font-semibold">{{data.isAnonymous? 'Anonymous' : data.username}}</span>
                                 <span class="text-sm text-black font-extralight">{{data.date}}</span>
                             </div>
                         </div>

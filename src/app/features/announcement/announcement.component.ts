@@ -21,7 +21,7 @@ export class AnnouncementComponent extends CommonVariable implements OnInit, OnD
   getAdminPicture$ !: Subscription
 
   announcementPayload !: AnnouncementPaginationPayload
-  imageDataMap: { [key: number]: string } = {};
+  imageDataMap: { [key: number]: string |null } = {};
 
   
 
@@ -73,8 +73,7 @@ export class AnnouncementComponent extends CommonVariable implements OnInit, OnD
         this.announcementList = [...this.announcementList, ...res.data.content]
   
         this.announcementPaginatedData.content.forEach((admin) => {
-              if(admin.userId){
-                if(!(admin.userId in  this.imageDataMap)){
+              if(admin.profileUrl){
                 this.getAdminPicture$ = this.adminServcie.getStaffPicture(admin.userId).subscribe((imageBlob: Blob) => {
     
     
@@ -86,8 +85,10 @@ export class AnnouncementComponent extends CommonVariable implements OnInit, OnD
                   console.log("error when trying to access")
               });
               });
+            }else{
+              this.imageDataMap[admin.userId] = null
             }
-            }
+            
             }
           
         );

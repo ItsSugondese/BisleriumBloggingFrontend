@@ -69,10 +69,10 @@ export const  NavbarConstant = [
         icon: 'campaign',
         iconLibrary: "angular"
     },   
-    {
-        routeLink: ManagementRouteConstant.test,
-        label: "Announcement",
-        icon: 'campaign',
-        iconLibrary: "angular"
-    },   
+    // {
+    //     routeLink: ManagementRouteConstant.test,
+    //     label: "Announcement",
+    //     icon: 'campaign',
+    //     iconLibrary: "angular"
+    // },   
 ];

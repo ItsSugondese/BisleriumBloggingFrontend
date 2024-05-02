@@ -12,6 +12,10 @@ import { ManagementRouteConstant } from 'src/app/constant/routing/management-rou
 import { UserRouteConstant } from 'src/app/constant/routing/user-routing-constant.model';
 import { LoginModel } from '../../auth-service/model/auth.model';
 import { Subscription } from 'rxjs';
+import { error } from 'jquery';
+import { SnackbarService } from 'src/app/templates/snackbar/snackbar-service/snackbar.service';
+import { MessageStatus } from 'src/app/templates/snackbar/snackbar.template.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 declare const FB: any;
 
@@ -27,6 +31,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     password: ['', Validators.required]
   });
 
+  mgmtRoute = ManagementRouteConstant
+
   private clientId = environment.clientId;
   formHeader !: loginFormHeader;
   loginWithGoogleSubscription$ !: Subscription
@@ -38,76 +44,24 @@ export class LoginComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
     private loginService: LoginService,
-    private userService: UserService) {
+    private userService: UserService, private snackService: SnackbarService) {
     this.formHeader = loginService.formHeader;
   }
 
   ngOnInit(): void {
 
-    // @ts-ignore
-    window.onGoogleLibraryLoad = () => {
-      // @ts-ignore
-      google.accounts.id.initialize({
-        client_id: this.clientId,
-        callback: this.handleCredentialResponse.bind(this),
-
-        auto_select: false,
-        cancel_on_tap_outside: true
-      });
-      // @ts-ignore
-      google.accounts.id.renderButton(
-        // @ts-ignore
-        
-        document.getElementById("parent"),
-        { theme: "outline", size: "large", width: "100%",}
-        );
-        //@ts-ignore
-        google.accounts.id.renderButton(
-          // @ts-ignore
-          
-          document.getElementById("buttonDiv"),
-          { theme: "outline", size: "large", width: "100%",}
-        );
-      // @ts-ignore
-      google.accounts.id.prompt((notification: PromptMomentNotification) => { });
-    };
+   
   }
 
-   handleCredentialResponse(response: CredentialResponse) {
-      this.loginWithGoogleSubscription$ = this.service.LoginWithGoogle(response.credential).subscribe(
-        (result) => {
 
-          this.formHeader = {
-            status: "Login Successful",
-            color: "Green"
-          };
-      
-          this.userService.setRoles(result.data.roles);
-          this.userService.setToken(result.data.jwtToken);
-          this.userService.setUsername(result.data.username);
-      
-          if (result.data.roles.includes('ADMIN'.toUpperCase())) {
-            this.router.navigate(['/admin/manage_staff']);
-          } else if (result.data.roles.includes('STAFF'.toUpperCase())) {
-            this.router.navigate(["/admin/manage_staff"]);
-          } else {
-            this.router.navigate(['', UserRouteConstant.homepage]);
-          }
-        }
-      )
-      // const result: any = await this.service.LoginWithGoogle(response.credential).toPromise();
-
-  
-    
-  }
   
 
    onSubmit() {
     //this.formSubmitAttempt = false;
     if (this.form.valid) {
       const val : LoginModel = {
-        userEmail: this.formValue('email')?.value,
-        userPassword: this.formValue('password')?.value
+        email: this.formValue('email')?.value,
+        password: this.formValue('password')?.value
       }
 
       this.service.loginUser(val).subscribe(
@@ -115,10 +69,10 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.userService.setToken(result.data.jwtToken);
           this.userService.setRoles(result.data.roles);
           this.userService.setUsername(result.data.username);
-          const role = result.data.roles[0];
-          if(role == 'ADMIN'){
+          const role = result.data.roles;
+          if(role.toUpperCase() == 'ADMIN'){
           this.router.navigate(['/' + ManagementRouteConstant.adminDashboard])
-        }else if(role == 'STAFF'){
+        }else if(role.toUpperCase() == 'Blogger'){
             this.router.navigate(['/' + ManagementRouteConstant.staffDashboard])
           }else{
             this.router.navigate(['/' + UserRouteConstant.homepage])

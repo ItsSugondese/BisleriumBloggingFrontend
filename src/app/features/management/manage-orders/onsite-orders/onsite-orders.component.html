@@ -122,7 +122,7 @@
                             </ng-container>
                 
                             <ng-container *ngIf="onsiteOrdersService.selectedOption == 'VIEWED'">
-                              <div class=" footer-order flex justify-between " [class]="buttonCss()">
+                              <div class=" footer-order flex justify-between space-x-3" [class]="buttonCss()">
                 
                                 <div (click)="showPopUp = true; selectedOrderId = content.id">
                                   <default-button-template [text]="'Cancel Order'" [background]="'white'"
@@ -391,7 +391,7 @@
         <button type="submit" data-dismiss="modal"
           [ngClass]="{'disabled-button': paidAmount == null  || paidAmount <= 0 || paidAmount >  selectedOrder.remainingAmount}"
           (click)="pay(paidAmount)"
-          class="text-white bg-customPrimary hover:cursor-pointer  items-center rounded px-2  py-1.5 text-base">Select</button>
+          class="text-white bg-customPrimary hover:cursor-pointer  items-center rounded px-2  py-1.5 text-base">Pay</button>
 
       </div>
     </div>

@@ -11,7 +11,7 @@ import { catchError, finalize } from 'rxjs';
 export class ManageStaffService extends ServiceCommonVariable {
 
   backendUrl = environment.apiUrl;
-  moduleName :string = "staff";
+  moduleName :string = "user";
   pictureLoading = false
   isInspecting : boolean = false;
 
@@ -39,6 +39,17 @@ export class ManageStaffService extends ServiceCommonVariable {
   }
   
   getStaffPicture(id: number) {
+    this.pictureLoading = true
+    return this.httpClient.get(this.backendUrl + this.moduleName +'/photo/' + id, { responseType: 'blob' })
+    .pipe(
+      catchError(error => {
+        this.pictureLoading = false;
+        throw error;
+      }),
+      finalize(() => this.pictureLoading = false)
+    );
+  }
+  getUserPicture(id: string) {
     this.pictureLoading = true
     return this.httpClient.get(this.backendUrl + this.moduleName +'/photo/' + id, { responseType: 'blob' })
     .pipe(

@@ -6,11 +6,18 @@
         <add-button-template text="Table"></add-button-template>
     </div>
 
+    <div *ngIf="tableService.getLoading; else loaded" [class]="centerItems">
+        <mat-spinner style="color: red;"></mat-spinner>
+      </div>
+
     <!-- <div class="flex flex-wrap "> -->
-    <div class="grid grid-cols-3 gap-4">
-    
-        <ng-container *ngIf="(tablesSubscription$ | async)?.data as res">
-            <ng-container *ngFor="let item of res">
+        <ng-template #loaded>
+            <div [class]="centerItems" *ngIf="tableData.length == 0; else data">
+                <no-content-template></no-content-template>
+              </div>
+              <ng-template #data>
+    <div class="grid grid-cols-3 gap-4 mt-3">
+            <ng-container *ngFor="let item of tableData">
                 <!-- <div class="flex items-center bg-white">
                     <div class="bg-white p-2 text-center" (click)="selectingTable(item)">
                         <span>Table Number: {{item.tableNumber}}</span>
@@ -34,8 +41,9 @@
   </div>
 </div>
             </ng-container>
-        </ng-container>
-    </div>
+        </div>
+    </ng-template>
+    </ng-template>
 
 
 </div>

@@ -140,35 +140,35 @@ export class ManageFoodsComponent extends CommonVariable implements OnInit, OnDe
 
    getFoodMenu(){
     
-    if(this.selectedFoodMenuType == 'ALL'){
-      this.foodMenuPagination.foodType = undefined
-    }else{
-    this.foodMenuPagination.foodType = this.selectedFoodMenuType
-  }
+  //   if(this.selectedFoodMenuType == 'ALL'){
+  //     this.foodMenuPagination.foodType = undefined
+  //   }else{
+  //   this.foodMenuPagination.foodType = this.selectedFoodMenuType
+  // }
     
-    this.foodMenuFetch$ = this.foodService.getFoodMenuPaginated(this.foodMenuPagination).subscribe(
-      (response ) => {
+  //   this.foodMenuFetch$ = this.foodService.getFoodMenuPaginated(this.foodMenuPagination).subscribe(
+  //     (response ) => {
         
-        this.foodMenu = response.data.content;
+  //       this.foodMenu = response.data.content;
 
-        this.foodMenu.forEach((menu) => {
-          if(menu.photoId){
-            this.getFoodPicture$ = this.foodService.getFoodPicture(menu.photoId).subscribe((imageBlob: Blob) => {
+  //       this.foodMenu.forEach((menu) => {
+  //         if(menu.photoId){
+  //           this.getFoodPicture$ = this.foodService.getFoodPicture(menu.photoId).subscribe((imageBlob: Blob) => {
 
 
-            this.createImageFromBlob(imageBlob, menu.photoId)
-             .then((imageData) => {
-              this.imageDataMap[menu.photoId] = imageData;
+  //           this.createImageFromBlob(imageBlob, menu.photoId)
+  //            .then((imageData) => {
+  //             this.imageDataMap[menu.photoId] = imageData;
               
-          })
-          .catch((error) => {
-              console.log("error when trying to access")
-          });
-          });
-        }
-        }); 
-      }
-    )
+  //         })
+  //         .catch((error) => {
+  //             console.log("error when trying to access")
+  //         });
+  //         });
+  //       }
+  //       }); 
+  //     }
+  //   )
   }
 
 

@@ -103,7 +103,7 @@ export class HeaderComponent extends CommonVariable implements OnInit, OnDestroy
         if(this.userData.userType == 'USER'){
           this.imageMap = this.userData.profilePath
         }else{
-        this.userPictureSubscription$ = this.staffService.getStaffPicture(this.userData.id).subscribe((imageBlob: Blob) => {
+        this.userPictureSubscription$ = this.staffService.getUserPicture(this.userData.id).subscribe((imageBlob: Blob) => {
 
           if(this.userData.profilePath){
     

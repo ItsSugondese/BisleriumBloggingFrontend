@@ -5,11 +5,17 @@ import { ManagementRouteConstant } from '../constant/routing/management-routing-
 import { LogoutComponent } from './registration/logout/logout.component';
 import { PasswordResetComponent } from './registration/password-reset/password-reset.component';
 import { ForgotPasswordComponent } from './registration/forgot-password/forgot-password.component';
+import { ForbiddenComponent } from './forbidden/forbidden.component';
+import { PathDeciderComponent } from './path-decider/path-decider.component';
+import { RegisterUserComponent } from './registration/register-user/register-user.component';
 
 const routes: Routes = [
+  {path: '_', component: PathDeciderComponent},
   {path: ManagementRouteConstant.login, component: LoginComponent},
   {path: ManagementRouteConstant.forgotPassword, component: ForgotPasswordComponent},
   {path: ManagementRouteConstant.resetPassword, component: PasswordResetComponent},
+  {path: ManagementRouteConstant.forbidden, component: ForbiddenComponent},
+  {path: ManagementRouteConstant.register, component: RegisterUserComponent},
   // {
   //   path: '',
   //   component: LoginComponent,

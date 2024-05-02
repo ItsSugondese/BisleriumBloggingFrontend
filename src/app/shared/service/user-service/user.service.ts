@@ -8,21 +8,17 @@ export class UserService {
 
   constructor() { }
 
-  public setRoles(roles : role[]){
+  public setRoles(roles : string){
     
-  localStorage.setItem("roles", JSON.stringify(roles));
+  localStorage.setItem("roles", roles);
   }
 
   public getSingleRole(){
-    const roles = this.getRoles();
-if (roles.length > 0) {
-    return roles[0]; // Accessing the first element if the array is not empty
-} 
-else "";
+    return this.getRoles();
   }
-  public getRoles() : any[]{
+  public getRoles() :string | null{
     
-    return JSON.parse(localStorage.getItem('roles') || '{}');
+    return localStorage.getItem('roles') ;
   }
 
   public setToken(token : string){
@@ -60,17 +56,17 @@ else "";
     
   
     if(roles!=null && roles){
-    for(let i=0; i<roles.length; i++){
+   
 
       for(let j=0; j<allowedRoles.length; j++){
 
-        if(roles[i] == allowedRoles[j]){
+        if(roles.toUpperCase() == allowedRoles[j].toUpperCase()){
 
           return true;
         }
       }
     }
-  }
+  
   return false;
   }
 }
