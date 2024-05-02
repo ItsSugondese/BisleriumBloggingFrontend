@@ -1,3 +1,5 @@
+import { Comments } from "src/app/features/blog-inspect/comment-service/model/comment.model";
+
 export interface foodMenu{
     id : number,
     name: string,
@@ -20,7 +22,10 @@ export interface foodMenu{
     score: number;
     comments: number;
     hasReacted: boolean | null;
+    imageUrl: string,
+    commentDetails: Comments[]
 }
+ 
 
 
 

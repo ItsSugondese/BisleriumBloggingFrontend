@@ -25,6 +25,7 @@ import { UserManagementPaymentComponent } from './management/people-management/u
 import { InventoryManagementAdminComponent } from './management/inventory/inventory-management-admin/inventory-management-admin.component';
 import { InventoryManagementBodyComponent } from './management/inventory/inventory-management-body/inventory-management-body.component';
 import { ForbiddenComponent } from '../_auth/forbidden/forbidden.component';
+import { BlogInspectComponent } from './blog-inspect/blog-inspect.component';
 
 const routes: Routes = [
   {path: ManagementRouteConstant.foodManagement, component: ManageFoodBodyComponent,  

@@ -1,0 +1,149 @@
+<div id="main-div">
+    <div *ngIf="blogService.loading; else loaded" [class]="centerItems">
+        <mat-spinner style="color: red;"></mat-spinner>
+      </div>
+    
+      <ng-template #loaded>
+    <div class="container mx-auto p-4">
+
+        <div class="bg-white w-full rounded-lg shadow-md p-6 flex space-x-3">
+          <div class="flex flex-col items-center">
+            <button class="flex items-center space-x-1  "
+        [class.text-orange-500]="blog.hasReacted"
+        (click)="react(true)">
+
+    <i class="fas fa-arrow-up "></i>
+</button>
+          <!-- Total Score -->
+          <span class="text-gray-700 font-bold"
+          [class.text-orange-500]="blog.hasReacted"
+          [class.text-red-700]="blog.hasReacted != null && !blog.hasReacted"
+          > {{blog.score}}</span>
+          <!-- Downvote Button -->
+          <button class="flex items-center space-x-1 text-gray-600 "
+          [class.text-red-700]="blog.hasReacted != null && !blog.hasReacted"
+          (click)="react(false)">
+              <i class="fas fa-arrow-down"></i>
+          </button>
+          </div>
+          <div class="w-full">
+            <!-- Title -->
+            <div class="flex justify-between items-center mb-4">
+              <h1 class="text-2xl font-bold ">{{blog.title}}</h1>
+              <span class="font-semibold">{{blog.postedOn}}</span>
+            </div>
+    
+            <!-- Content -->
+            <div class="mb-6">
+                <p class="text-gray-800">{{blog.content}}</p>
+            </div>
+    
+            <div class="flex justify-between w-full ">
+            <!-- Author Info -->
+            <div class="flex items-center ">
+                <!-- Author Image -->
+                <img [src]="imageDataMap[blog.userId] == null? 'assets/avatar/anon.jpg' : authorImage" alt="Author" class="w-8 h-8 rounded-full mr-2">
+    
+                <!-- Author Name -->
+                <span class="text-gray-700">Posted by {{blog.username}}</span>
+            </div>
+    
+            
+            <span class="text-gray-700">Comments: <span class="font-bold">{{blog.comments}}</span></span>
+          </div>
+           
+        </div>
+        </div>
+    
+   
+<!-- post comment -->
+        <div class="bg-white rounded-lg shadow-md p-6 mt-4 w-full">
+            <div class="">
+                <textarea class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+                [(ngModel)]="writtenComment" placeholder="Add your comment..." rows="4"></textarea>
+                <div class="w-full flex justify-end">
+                    
+                    
+                    <clean-button-template text="Post Comment" [isDisabled]="writtenComment == null || writtenComment == '' || commentService.loading " 
+                    (clicked)="postComment(undefined)"></clean-button-template>
+                </div>
+            </div>
+            <h2 class="text-xl font-bold mb-4 mt-4">Comments</h2>
+            
+            <div [class]="centerItems" *ngIf="blog.commentDetails.length == 0; ">
+                <no-content-template></no-content-template>
+            </div>
+            
+            
+            <!-- Comments Section -->
+              <div class="mt-4 space-y-6">
+              <ng-container *ngFor="let item of blog.commentDetails;let i = index">
+            <div class="flex space-x-4 px-3" *ngIf="blog.commentDetails.length > 0">
+
+                <div class="flex flex-col items-center">
+                    <button class="flex items-center space-x-1  "
+                [class.text-orange-500]="item.hasReacted"
+                (click)="reactComment(true, item, i)">
+        
+            <i class="fas fa-arrow-up "></i>
+        </button>
+                  <!-- Total Score -->
+                  <span class="text-gray-700 font-bold"
+                  [class.text-orange-500]="item.hasReacted"
+                  [class.text-red-700]="item.hasReacted != null && !item.hasReacted"
+                  > {{item.score}}</span>
+                  <!-- Downvote Button -->
+                  <button class="flex items-center space-x-1 text-gray-600 "
+                  [class.text-red-700]="item.hasReacted != null && !item.hasReacted"
+                  (click)="reactComment(false, item, i)">
+                      <i class="fas fa-arrow-down"></i>
+                  </button>
+                  </div>
+
+
+            <div class=" bg-white rounded-xl w-full   ">
+                <div class="header flex  justify-between w-full ">
+                    <div class="left-header flex w-full">
+                        <div class="image-container mr-1">
+                            <div class="w-12 h-12  rounded-full overflow-hidden">
+                                <img [src]="imageDataMap[item.userId] == null? 'assets/avatar/anon.jpg' : imageDataMap[item.userId]"
+                                    alt="Your Image" class="w-full h-full object-cover" />
+                            </div>
+                        </div>
+                        <div class="feedback-details flex flex-col">
+                            <span class="text-xl font-semibold">{{item.username}}</span>
+                            <span class="text-sm text-black font-extralight">{{item.postedOn}}</span>
+                        </div>
+                    </div>
+
+                    <div class="hover:cursor-pointer" *ngIf="item.myComment" [matMenuTriggerFor]="menu">
+                        <mat-icon>more_vert</mat-icon>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="true">Edit</button>
+                            <button mat-menu-item (click)="showPopUp = true; selectedComment = item.id"><span class="text-red-700">Delete</span></button>
+                          </mat-menu>
+                    </div>
+
+        
+                </div>
+
+                <div class="feedback-content  text-base mt-2 mb-4 pl-12">
+                    {{item.content}}
+                </div>
+                
+            </div>
+        </div>
+    </ng-container>
+</div>
+            
+
+            
+        </div>
+    </div>
+      </ng-template>
+</div>
+
+<are-you-sure-template [visible]="showPopUp" [header]="'Delete Comment'" [selectedId]="selectedComment"
+  [description]="'Are you sure you want to delete this comment?'" [positiveLabel]="'Yes'" [negativeLabel]="'No'"
+  (visibleChange)="showPopUp = false; selectedComment = null" (yesEvent)="deleteComment()"
+  [isLoading]="commentService.deletingComment" *ngIf="selectedComment"></are-you-sure-template>

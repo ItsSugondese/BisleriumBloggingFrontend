@@ -130,7 +130,17 @@ public toggleLoading = {
       
       this.handleError()
       );
-   
+  }
+  getSingleBlog(id : number){
+    this.loading = true
+     return this.httpClient.get<ResponseData<Blog>>(`${this.backendUrl}${this.moduleName}/${id}`)
+     .pipe(
+      this.handleError()
+      );
+  }
+
+  getBlogPicture(id: number) {
+    return this.httpClient.get(`${this.backendUrl}${this.moduleName}/doc/${id}`, { responseType: 'blob' });
   }
 
   reactBlog(data: BlogReactionPayload){

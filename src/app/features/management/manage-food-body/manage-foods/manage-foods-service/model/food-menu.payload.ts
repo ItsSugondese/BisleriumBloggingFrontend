@@ -20,3 +20,4 @@ export interface BlogReactionPayload {
     blogId: number;
     reaction: string;
 }
+

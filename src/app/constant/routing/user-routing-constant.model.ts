@@ -3,5 +3,7 @@ export const UserRouteConstant = {
     userOrderHistory: "user_order_history",
     foodManagement: "manage_foods",
     adminDashboard: 'admin/dashboard',
-    homepage: 'homepage'
+    homepage: 'homepage',
+    blogView: 'view/:id',
+
   };

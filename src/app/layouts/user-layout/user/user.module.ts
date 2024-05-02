@@ -9,12 +9,14 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from '@shared/module/material.module';
 import { NgprimeModule } from '@shared/module/ngprime.module';
 import { FormModule } from '@shared/module/form.module';
+import { BlogInspectComponent } from 'src/app/features/blog-inspect/blog-inspect.component';
 
 
 @NgModule({
   declarations: [
     UserOrderComponent,
-    HomepageComponent
+    HomepageComponent,
+    BlogInspectComponent
   ],
   imports: [
     CommonModule,
