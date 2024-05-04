@@ -97,7 +97,6 @@ export class AdminDashboardComponent extends CommonVariable implements OnInit, O
     this.userService.selectedOption = 'EXTERNAL_USER'
     }
   }
-    this.router.navigate(['/' + ManagementRouteConstant.userManagement]);
   }
 
 

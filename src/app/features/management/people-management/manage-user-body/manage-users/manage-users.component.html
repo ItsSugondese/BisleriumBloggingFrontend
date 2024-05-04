@@ -1,4 +1,45 @@
-<div id="main-div" class="space-y-5">
+<div id="main-div">
+    <div class="flex-1 flex flex-col w-full justify-center items-center " *ngIf="userData">
+        <div class="flex flex-col w-full items-center space-y-3">
+        <div class="flex justify-end w-1/2">
+            <clean-button-template text="Edit Details"
+            (clicked)="onOpeningDrawer.emit(true); this.sendUserId.emit(userData);" ></clean-button-template>
+        </div>
+    <div class="w-1/2 bg-white shadow-md rounded-md overflow-hidden ">
+        <div class=" bg-white shadow-md rounded-md overflow-hidden p-8">
+            <!-- User Image -->
+            <div class="flex justify-center">
+                
+                
+
+                 <div class="group image-container  w-fit h-fit p-3 px-0 pt-1 overflow-hidden rounded-sm">
+                    <img  [src]="userProfileService.imageMap == null? 'assets/avatar/anon.jpg' : userProfileService.imageMap" 
+                    class="h-32 w-32 rounded-full object-cover "
+                      [class.group-hover:brightness-75]="userProfileService.imageMap!= null">
+                    <div class="hidden w-full  top-0  justify-center p-1 group-hover:flex  hover:cursor-pointer bg-white rounded"
+                       *ngIf="userProfileService.imageMap != null">
+  
+                      <default-button-template text="Remove" (clicked)="removeImage()"></default-button-template>
+  
+  
+                    </div>
+                  </div>
+            </div>
+            <!-- Username -->
+            <div class="text-center mt-4">
+                <h1 class="text-3xl font-semibold">{{userData.fullName}}</h1>
+            </div>
+            <!-- Email -->
+            <div class="text-center mt-2">
+                <p class="text-gray-600">{{userData.email}}</p>
+            </div>
+        </div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- <div id="main-div" class="space-y-5">
     <div class="flex justify-between">
 
         <div>
@@ -153,130 +194,4 @@
     
     </tfoot>
 </div>
-
-
-<!-- <div id="main-div" class="">
-
-    <div class="flex justify-between">
-
-        <div>
-            <food-filter-template [selectedKey]="manageUserService.selectedOption" [options]="manageUserService.options"
-      (optionSelected)="selectedUserTypeToFilter($event)"></food-filter-template>
-        </div>
-        
-        <div class="flex ">
-
-            <search-template (typedData)="typedUserToFilter($event)"></search-template>
-    
-            <div (click)="onOpeningDrawer.emit(true); this.sendUserId.emit(null);">
-                <add-button-template [text]="'User'"></add-button-template>
-            </div>
-        </div>
-    </div>
-    
-    
-    <div *ngIf="manageUserService.loading; else loaded" [class]="centerItems">
-        <mat-spinner style="color: red;"></mat-spinner>
-    </div>
-
-    
-    <ng-template #loaded>
-        <div [class]="centerItems" *ngIf="userListPaginated.content.length == 0; else notEmpty">
-            <no-content-template></no-content-template>
-          </div>
-        <ng-template #notEmpty>
-        <div class="h-full mt-4" >
-            <div class=" ">
-                <table class="w-full rounded-lg">
-                    <thead class="bg-[#f5f5f5] border-2 border-transparent">
-                        <tr class="text-customPrimary p-2 px-3 ">
-                            <th style="padding: inherit;">Username</th>
-                            <th>Email</th>
-                            <th>User Type</th>
-                            <th>Account Status</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        <ng-container *ngFor="let data of userListPaginated.content | paginate: {
-                            itemsPerPage : paginationJson.row,
-                            currentPage : userListPaginated.currentPageIndex,
-                            totalItems : userListPaginated.totalElements
-                        }; let first= first;">
-                            <tr class="table-row-hover bg-white p-2 px-3 hover:bg-[#f5f5f5] h-full   border-2 border-[#F0F0F0]
-                            
-                        text-sm" [class.border-t-0]="first">
-                                <td class="hidden">{{data.id}}</td>
-                                <td style="padding: inherit;">{{data.fullName}}</td>
-                                <td>{{data.email}}</td>
-                                <td>{{data.isExternal? 'External' : 'Internal'}}</td>
-                                <td class="pl-5">
-
-
-                                    <text-type-template [text]="'Running'"
-                                        *ngIf="data.accountNonLocked; else disabled"></text-type-template>
-
-                                    <ng-template #disabled>
-                                        <text-type-template [text]="'Disabled'" [status]="false"></text-type-template>
-                                    </ng-template>
-
-                                </td>
-                                <td align="center" class="h-full mt-2">
-
-
-                                    <div class="flex justify-center ">
-                                        <div *ngIf="data.isExternal; else isInternal">
-                                            <mat-icon class="hover:cursor-pointer h-full
-                                hover:text-customPrimary"
-                                                style="font-size: 18px; display: flex; align-items: center; justify-content: center;"
-                                                (click)="onOpeningDrawer.emit(true); this.sendUserId.emit(data);"
-                                                [class.text-gray-600]="!data.isExternal">edit</mat-icon>
-                                            </div>
-                                            <ng-template #isInternal>
-                                            <mat-icon class=" h-full"
-                                                style="font-size: 18px; display: flex; align-items: center; justify-content: center;"
-                                                [class.text-gray-600]="!data.isExternal">edit_off</mat-icon>
-
-                                        </ng-template>
-                                        <div>
-                                            <mat-icon class="hover:cursor-pointer h-full
-                                hover:text-customPrimary"
-                                                style="font-size: 18px; display: flex; align-items: center; justify-content: center;"
-                                                (click)="navigateToSingle(data)">visibility</mat-icon>
-                                        </div>
-                                    </div>
-
-                                </td>
-
-                            </tr>
-                        </ng-container>
-                    </tbody>
-
-
-                </table>
-                <tfoot class="flex justify-between  w-full h-full mt-2">
-                    <p>{{userListPaginated.numberOfElements}} of {{userListPaginated.totalElements}} items</p>
-                    
-                        <pagination-controls previousLabel="Prev" nextLabel="Next"
-                            (pageChange)="onTableDataChange($event)" class="">
-                        </pagination-controls>
-                    
-                    
-                        <div class="bg-white w-fit pr-3">
-    
-                            <pagination-dropdown-template [data]="tableSizes" [defaultSelected]="paginationJson.row"
-                                (selectedDropdownOptionChange)="onSelectedDropdown($event)"></pagination-dropdown-template>
-                            <span>/page</span>
-                        </div>
-                 
-
-                </tfoot>
-            </div>
-        </div>
-    </ng-template>
-       
-    </ng-template>
-</div> -->
-
-
+ -->

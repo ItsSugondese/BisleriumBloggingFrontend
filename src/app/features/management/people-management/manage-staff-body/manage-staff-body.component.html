@@ -3,6 +3,4 @@
     <app-add-staff (onOpeningDrawer)="onToggleDrawer($event)" [staff]="staff"></app-add-staff>
 </div>
 <app-manage-staff *ngIf="!manageStaffService.isInspecting" (sendUserId)="getUserId($event!)"
-    (isInspectingEvent)="handleIsInspecting($event)" (onOpeningDrawer)="onToggleDrawer($event)"></app-manage-staff>
-<app-staff-inspect-body *ngIf="manageStaffService.isInspecting" [staff]="staff!"
-    (isInspectingEvent)="handleIsInspecting($event)"></app-staff-inspect-body>
+ (onOpeningDrawer)="onToggleDrawer($event)"></app-manage-staff>

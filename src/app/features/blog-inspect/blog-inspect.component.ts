@@ -1,13 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Blog } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.model';
+
 import { ManageFoodsService } from '../management/manage-food-body/manage-foods/manage-foods-service/manage-foods.service';
 import { ManageStaffService } from '../management/people-management/manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
 import { CommonVariable } from '@shared/helper/inherit/common-variable';
-import { BlogReactionPayload,  } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.payload';
+
 import { CommentService } from './comment-service/comment.service';
 import { CommentPayload, CommentReactionPayload, Comments } from './comment-service/model/comment.model';
+import { Location } from '@angular/common';
+import { BlogService } from './blog-service/blog.service';
+import { Blog, BlogReactionPayload } from './blog-service/model/blog.model';
 
 @Component({
   selector: 'app-blog-inspect',
@@ -28,11 +31,14 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
   blogImage !: string
   imageDataMap: { [key: string]: string } = {};
   writtenComment : string | null =null
-  selectedComment : number | null = null
+  selectedComment : Comments | null = null
+  deleteBlogPopUp = false
+  blogEditVisible = false;
 
-
-  constructor(private route: ActivatedRoute, public blogService: ManageFoodsService,
-    private userService : ManageStaffService, public commentService: CommentService
+  visible = false;
+  constructor(private route: ActivatedRoute, public blogService: BlogService,
+    private userService : ManageStaffService, public commentService: CommentService,
+    public location: Location
   ) { 
     super()
   }
@@ -43,6 +49,21 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
   });
 
   this.getBlog()
+  }
+
+
+  afterUpdate(event : boolean){
+    this.visible = false; 
+    this.selectedComment = null;
+    if(event){
+      this.getBlog()
+    }
+  }
+  afterUpdateBlog(event : boolean){
+    this.blogEditVisible = false; 
+    if(event){
+      this.getBlog()
+    }
   }
 
   public getBlog(){
@@ -109,16 +130,25 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
 
     this.postComment$ = this.commentService.postComment(payload).subscribe(
       (res) => {
+        this.writtenComment = null;
         this.getBlog()
       }
     )
   }
 
   deleteComment(){
-    this.postComment$ = this.commentService.deleteComment(this.selectedComment!).subscribe(
+    this.postComment$ = this.commentService.deleteComment(this.selectedComment?.id!).subscribe(
       (res) => {
         this.getBlog()
-      }
+        this.showPopUp = false;
+      },
+    )
+  }
+  deleteBlog(){
+    this.postComment$ = this.blogService.deleteBlog(this.blogId).subscribe(
+      (res) => {
+        this.location.back();
+      },
     )
   }
 
@@ -210,6 +240,8 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
       }
     )
   }
+
+  
 
   ngOnDestroy(): void {
       if(this.blogFetch$){

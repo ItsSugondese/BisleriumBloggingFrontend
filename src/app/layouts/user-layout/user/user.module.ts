@@ -16,7 +16,7 @@ import { BlogInspectComponent } from 'src/app/features/blog-inspect/blog-inspect
   declarations: [
     UserOrderComponent,
     HomepageComponent,
-    BlogInspectComponent
+    BlogInspectComponent,
   ],
   imports: [
     CommonModule,

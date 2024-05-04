@@ -25,6 +25,8 @@ import { PayCashComponent } from './pop-up/pay-cash.template.componenet';
 import { UserPaymentManagementTableComponent } from './tables/user-payment-management-table.template.component';
 import { NgxModule } from '@shared/module/ngx.module';
 import { CleanButtonComponent } from './buttons/clean-button.template.component';
+import { PostBlogComponent } from './pop-up/post-blog.template.component';
+
 
 
 
@@ -50,7 +52,8 @@ import { CleanButtonComponent } from './buttons/clean-button.template.component'
   SearchWithFilterTemplateComponent,
   PayCashComponent,
   UserPaymentManagementTableComponent,
-  CleanButtonComponent
+  CleanButtonComponent,
+  PostBlogComponent
   ],
   imports: [
     CommonModule,
@@ -59,7 +62,7 @@ import { CleanButtonComponent } from './buttons/clean-button.template.component'
     FormModule,
     MaterialModule,
     OverlayModule,
-    NgxModule
+    NgxModule,
   ],
   exports:[
     FoodFilterComponent,
@@ -81,7 +84,8 @@ import { CleanButtonComponent } from './buttons/clean-button.template.component'
   SearchWithFilterTemplateComponent,
   PayCashComponent,
   UserPaymentManagementTableComponent,
-  CleanButtonComponent
+  CleanButtonComponent,
+  PostBlogComponent
   ]
 })
 export class TemplatesModule { }

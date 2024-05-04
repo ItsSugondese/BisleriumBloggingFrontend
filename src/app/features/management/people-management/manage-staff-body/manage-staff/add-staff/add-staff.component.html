@@ -34,25 +34,29 @@
   <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
     <input type="hidden" name="hiddenField" value="{{formValue('id')?.value}}" formControlName="id">
     <div class="form-group">
-      <label for="name">Staff Name<span class="text-red-600 text-xl">*</span></label>
+      <label for="name">Admin Name<span class="text-red-600 text-xl">*</span></label>
       <input type="text" class="form-control border-2 focus:ring-0" id="name" placeholder="Enter Staff Name"
-      formControlName="fullName" >
+      formControlName="username" >
       
       
       <div class="form-group">
-        <label for="email">Staff Email<span class="text-red-600 text-xl">*</span></label>
+        <label for="email">Admin Email<span class="text-red-600 text-xl">*</span></label>
           <input type="email" id="email" class="form-control border-2 focus:ring-0" 
-            placeholder="Enter Email Address" formControlName="email" 
-            (input)="staff !=null && compareFormAndStaff()"
-            [readOnly]="staff != null" [ngClass]="{'bg-[#F5F5F5]':staff != null, 'text-[#BDC7D3]':staff != null}">
+            placeholder="Enter Email Address" formControlName="email" >
         </div>
       
 
       <div class="form-group mt-2">
-        <label for="contact">Contact Number <span class="text-red-600 text-xl">*</span></label>
-        <textarea class="form-control border-2 focus:ring-0" id="contact" aria-describedby="emailHelp"
-          placeholder="Enter Contact Number" formControlName="contactNumber"></textarea>
+        <label for="contact">Password <span class="text-red-600 text-xl">*</span></label>
+        <input type="password" id="email" class="form-control border-2 focus:ring-0" 
+            placeholder="Enter Email Address" formControlName="password" >
       </div>
+      <div class="form-group mt-2">
+        <label for="contact">Confirm Password <span class="text-red-600 text-xl">*</span></label>
+        <input type="password" id="email" class="form-control border-2 focus:ring-0" 
+            placeholder="Enter Email Address" formControlName="confirmPassword" >
+      </div>
+     
 
       <div class="form-group mt-2 h-fit">
         <label for="exampleFormControlFile1">Image upload</label>
@@ -69,7 +73,7 @@
           Cancel</div>
         <button type="submit" [disabled]="staffForm.invalid"
           class=" hover:cursor-pointer bg-customPrimary items-center text-white rounded-lg px-2  py-1.5 text-base"
-          [class.disabled-button]="staffForm.invalid || (staff != null && compareFormAndStaff() && imageId ==null)">Save</button>
+          [class.disabled-button]="staffForm.invalid">Save</button>
       </div>
 
     </div>

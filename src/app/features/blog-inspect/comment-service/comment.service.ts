@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BlogReactionPayload,  } from '../../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.payload';
 import { ResponseData } from 'src/app/constant/data/response-data.model';
 import { ServiceCommonVariable } from '@shared/helper/inherit/common-variable-serivce';
 import { HttpClient } from '@angular/common/http';

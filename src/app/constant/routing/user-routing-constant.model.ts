@@ -4,6 +4,8 @@ export const UserRouteConstant = {
     foodManagement: "manage_foods",
     adminDashboard: 'admin/dashboard',
     homepage: 'homepage',
-    blogView: 'view/:id',
+    blogView: 'view',
+    userManagement: 'manage_users',
+
 
   };

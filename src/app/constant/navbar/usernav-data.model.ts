@@ -9,7 +9,7 @@ export const  UserNavConstant = [
     },
     {
         routeLink: UserRouteConstant.userOrder,
-        label: "My Orders",
+        label: "My Blogs",
         icon: 'lunch_dining',
         iconLibrary: "angular"
     },

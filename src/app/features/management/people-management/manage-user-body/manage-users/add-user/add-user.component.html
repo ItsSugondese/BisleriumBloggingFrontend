@@ -21,7 +21,7 @@
 
     <div class="add-staff-body">
         <div class="absolute bg-black text-white flex w-full items-center justify-center top-0 left-0 h-full
-      opacity-50" *ngIf="staffService.pictureLoading">
+      opacity-50" *ngIf="userProfileService.pictureLoading">
             <mat-spinner></mat-spinner>
         </div>
         <div class="z-30">
@@ -30,13 +30,13 @@
 
             </div>
 
-            <div class="" *ngIf="user == null || (user!= null && imageLoaded)">
+            <div class="" >
                 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
                     <input type="hidden" name="hiddenField" value="{{formValue('id')?.value}}" formControlName="id">
                     <div class="form-group">
                         <label for="name">User Name<span class="text-red-600 text-xl">*</span></label>
                         <input type="text" class="form-control border-2 focus:ring-0" id="name"
-                            placeholder="Enter User Name" formControlName="fullName">
+                            placeholder="Enter User Name" formControlName="username">
 
 
                         <div class="form-group">

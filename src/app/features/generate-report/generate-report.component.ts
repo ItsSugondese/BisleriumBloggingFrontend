@@ -171,7 +171,6 @@ this.userDataSubscription$ = this.userService.getFinanceData(this.financeDataPay
     this.userService.selectedOption = 'EXTERNAL_USER'
     }
   }
-    this.router.navigate(['/' + ManagementRouteConstant.userManagement]);
   }
 
   downloadRevenue(){

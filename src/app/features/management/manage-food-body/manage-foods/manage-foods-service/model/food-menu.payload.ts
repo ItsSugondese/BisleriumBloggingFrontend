@@ -5,19 +5,11 @@ export interface FoodMenuPagination extends paginationPayload{
     foodType ?: string | null;
     filter ?: boolean | null
 }
-export interface BlogPagination extends paginationPayload{
-    sort: string,
-    fromDate ?: string;
-    toDate ?: string;
-    name ?: string
-}
+
 
 export interface ToggleAvailability{
     foodId: number;
     status: boolean
 }
-export interface BlogReactionPayload {
-    blogId: number;
-    reaction: string;
-}
+
 

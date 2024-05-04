@@ -13,9 +13,9 @@ import { UserRouteConstant } from 'src/app/constant/routing/user-routing-constan
 import { UserOrderHistory } from '../user-order/user-order-service/model/user-order.model';
 import { ManageFoodsService } from '../management/manage-food-body/manage-foods/manage-foods-service/manage-foods.service';
 import { CommonVariable } from '@shared/helper/inherit/common-variable';
-import { BlogPagination, BlogReactionPayload, FoodMenuPagination } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.payload';
-import { Blog } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.model';
 import { ManageStaffService } from '../management/people-management/manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
+import { BlogService } from '../blog-inspect/blog-service/blog.service';
+import { Blog, BlogPagination, BlogReactionPayload } from '../blog-inspect/blog-service/model/blog.model';
 
 
 
@@ -37,7 +37,7 @@ export class HomepageComponent extends CommonVariable implements OnInit, OnDestr
   reactionPayload !: BlogReactionPayload
   
   constructor(public homepageService: HomepageService,
-    public foodService: ManageFoodsService, private userOrderService: UserOrderService,
+    public blogService: BlogService, private userOrderService: UserOrderService,
     private router: Router, private staffService: ManageStaffService
   ) {
 super()
@@ -52,14 +52,18 @@ super()
     this.blogPagination = {
       page: 1,
       row: 10,
-sort: this.foodService.defaltFoodSelect,
+sort: this.blogService.defaltFoodSelect,
       name:  ''
     }
   }
 
+  navigateToDetails(id: number){
+    this.router.navigate([UserRouteConstant.blogView, id])
+  }
+
   public getFoodMenu(){
     
-    this.foodMenuFetch$ = this.foodService.getBlogPaginated(this.blogPagination).subscribe(
+    this.foodMenuFetch$ = this.blogService.getBlogPaginated(this.blogPagination).subscribe(
       (response ) => {
         
         this.foodMenuList = response.data.content;
@@ -122,7 +126,7 @@ sort: this.foodService.defaltFoodSelect,
 
     }
     }
-    this.reactBlog$ = this.foodService.reactBlog(payload).subscribe(
+    this.reactBlog$ = this.blogService.reactBlog(payload).subscribe(
       (res) => {
 
       },

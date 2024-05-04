@@ -7,6 +7,8 @@ import { User } from './manage-users-service/model/user.model';
 import { Router } from '@angular/router';
 import { CommonVariable } from 'src/app/shared/helper/inherit/common-variable';
 import { PaginatedData } from 'src/app/constant/data/pagination/pagination.model';
+import { UserProfileService } from '@shared/service/user-profile-service/user-profile.service';
+import { ManageStaffService } from '../../manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
 
 
 @Component({
@@ -17,110 +19,83 @@ import { PaginatedData } from 'src/app/constant/data/pagination/pagination.model
 export class ManageUsersComponent extends CommonVariable implements OnInit, OnDestroy {
 
   userListPaginated !: PaginatedData<User>
-  @Output() sendUserId : EventEmitter<User | null> = new EventEmitter()
-  @Output() isInspectingEvent : EventEmitter<boolean> = new EventEmitter()
-  @Output() onOpeningDrawer : EventEmitter<boolean> = new EventEmitter();
-
-  paginationJson: manageUserPagination = {
-    userType: ['USER', 'EXTERNAL_USER'],
-    page: 1,
-    row: 7
-  }
-  fromTime = new Date();
-  getUsersSubscriable$ !: Subscription
-  load = true
-  imageId$ !: Subscription;
-  imageDataMap: { [key: number]: string } = {};
+  @Output() sendUserId: EventEmitter<User | null> = new EventEmitter()
+  @Output() onOpeningDrawer: EventEmitter<boolean> = new EventEmitter();
 
 
-  
 
-  constructor(public manageUserService: ManageUsersService,) {
+
+  userSubscription$ !: Subscription
+  userPictureSubscription$ !: Subscription
+
+  userData !: User
+
+
+
+  constructor(public manageUserService: ManageUsersService, public userProfileService: UserProfileService,
+    private staffService: ManageStaffService
+  ) {
     super()
   }
 
   ngOnInit(): void {
-    this.getPaginatedData();
+    this.getUserData();
   }
 
-  selectedUserTypeToFilter(event: string | null){
-    this.manageUserService.selectedOption = event!
-    this.load = true
-    
-    
-    this.getPaginatedData()
-  }
-  
-  navigateToSingle(user: User) {
-    this.sendUserId.emit(user);
-    this.isInspectingEvent.emit(true)
 
-  }
 
-  getPaginatedData() {
-    if(this.manageUserService.selectedOption == 'ALL'){
-      this.paginationJson.userType = ['USER', 'EXTERNAL_USER']
-    }else if(this.manageUserService.selectedOption == 'INTERNAL') {
-      this.paginationJson.userType = ['USER']
-    }else{
-    this.paginationJson.userType = ['EXTERNAL_USER']
-    }
 
-    this.getUsersSubscriable$ = this.manageUserService.getData(
-      this.paginationJson).subscribe(
-        (response) => {
-          this.userListPaginated = response.data
-          this.load = false
-          this.getUsersSubscriable$.unsubscribe()
-
-          this.userListPaginated.content.forEach((user) => {
-            if(user.profilePath && user.isExternal){
-              this.imageId$ = this.manageUserService.getUserPicture(user.id).subscribe((imageBlob: Blob) => {
-               
-              this.createImageFromBlob(imageBlob, user.id)
-               .then((imageData) => {
-                this.imageDataMap[user.id] = imageData;
-            })
-          
-            });
-            }else if(!user.isExternal){
-              this.imageDataMap[user.id] = user.profilePath
-            }
-  
-          })
+  removeImage(){
+    if(this.userData.profilePath){
+      this.userPictureSubscription$ = this.userProfileService.deleteUserProfilePic(this.userData.id).subscribe(
+        (res) => {
+          this.userProfileService.imageMap = null;
+          this.getUserData()
         }
       )
-  }
-
-
-  typedUserToFilter(event: string){
-    if(event.trim() != ''){
-      this.paginationJson.name = event
-    }else{
-      this.paginationJson.name = undefined
     }
-
-    this.load = true;
-    this.getPaginatedData()
   }
 
-  onTableDataChange(event: any) {
-    this.paginationJson.page = event
-    this.getPaginatedData();
-  }
 
-  // onSelectedDropdown(event: any) {
-  //   if (this.paginationJson.row != event) {
-  //     this.paginationJson.row = event
-  //     this.paginationJson.page = 1
-  //     this.getPaginatedData();
-  //   }
-  // }
+
+
+
+
+  getUserData() {
+    this.userSubscription$ = this.userProfileService.getUserProfile().subscribe(
+      (res) => {
+        this.userData = res.data
+
+        
+          this.userPictureSubscription$ = this.staffService.getUserPicture(this.userData.id).subscribe((imageBlob: Blob) => {
+
+            if (this.userData.profilePath) {
+
+              this.createImageFromBlob(imageBlob, this.userData.id)
+                .then((imageData) => {
+                  this.userProfileService.imageMap = imageData;
+
+                })
+                .catch((error) => {
+                  console.log("error when trying to access")
+                })
+                .finally(() => {this.userPictureSubscription$.unsubscribe()});
+            }
+          }
+          );
+        
+
+      }
+    )
+  }
 
 
   ngOnDestroy(): void {
-    if (this.getUsersSubscriable$) {
-      this.getUsersSubscriable$.unsubscribe();
+    if (this.userSubscription$) {
+      this.userSubscription$.unsubscribe();
+    }
+    if (this.userPictureSubscription$) {
+      this.userPictureSubscription$.unsubscribe();
     }
   }
 

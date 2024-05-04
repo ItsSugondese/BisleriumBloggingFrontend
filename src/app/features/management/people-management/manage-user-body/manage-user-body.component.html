@@ -4,6 +4,4 @@
 </div>
 
 <app-manage-users *ngIf="!manageUserService.isInspecting" (sendUserId)="getUserId($event!)"
-    (isInspectingEvent)="manageUserService.handleIsInspecting($event)" (onOpeningDrawer)="onToggleDrawer($event)"></app-manage-users>
-<app-user-inspect-body *ngIf="manageUserService.isInspecting" [user]="user!"
-    (isInspectingEvent)="manageUserService.handleIsInspecting($event)"></app-user-inspect-body>
+ (onOpeningDrawer)="onToggleDrawer($event)"></app-manage-users>

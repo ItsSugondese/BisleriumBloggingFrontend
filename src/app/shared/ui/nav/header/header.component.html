@@ -8,12 +8,11 @@
         </div>
     </ng-template>
 
-    <div *ngIf="userService.getSingleRole() !='USER' && !sidenavService.collapsed"></div>
+    <div *ngIf="userService.getSingleRole()?.toUpperCase() !='BLOGGER' && !sidenavService.collapsed"></div>
 
-    <div *ngIf="userService.getSingleRole() !='USER' && !allowedUrl.includes(router.url) ; else navbar"></div>
-    <ng-template #navbar>
+    
 
-        <div class="header-nav h-full " *ngIf="userService.getSingleRole() =='USER'; else conditionChecker">
+        <div class="header-nav h-full "  *ngIf="userService.getSingleRole()?.toUpperCase() =='BLOGGER'">
             <div class="flex border-b-2 border-b-[#F0F0F0]">
                 <ng-container *ngFor="let data of navList">
 
@@ -26,37 +25,9 @@
             </div>
         </div>
 
-        <ng-template #conditionChecker>
-            <ng-container *ngIf="router.url == orderUrl">
+        
 
 
-                <div class=" h-full " [class.ml-64]="sidenavService.collapsed">
-                    <div class="flex border-b-2 border-b-[#F0F0F0]">
-                        <ng-container *ngFor="let item of manageOrderOptions">
-                            <div class="text-xl h-full pb-2 first:ml-0 ml-2 hover:cursor-pointer"
-                                (click)="updateSelectedOrderNavbar(item.value)"
-                                [class.active]="item.value == managementNavbarService.selectedNavbar">
-                                {{item.value}}</div>
-
-                        </ng-container>
-                    </div>
-                </div>
-            </ng-container>
-        </ng-template>
-    </ng-template>
-
-
-
-
-
-    <!-- <button
-    (click)="isOpen = !isOpen"
-    cdkOverlayOrigin #trigger="cdkOverlayOrigin"
-  >
-    Open/close overlay
-  </button> -->
-
-    <!-- This template displays the overlay content and is connected to the button -->
 
 
 
@@ -123,13 +94,13 @@
                 <button class="ml-6 flex items-center   dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     <div class="imaage-content w-9 h-9  rounded-full overflow-hidden">
-                        <img [src]="imageMap == null? 'assets/avatar/anon.jpg' : imageMap" alt="User Image" class="w-full h-full object-cover" />
+                        <img [src]="userProfileService.imageMap == null? 'assets/avatar/anon.jpg' : userProfileService.imageMap" alt="User Image" class="w-full h-full object-cover" />
                     </div>
                     <div class="ml-1  font-semibold" style="font-size: 17px;">{{userData.fullName}}</div>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item hover:cursor-pointer" 
-                        (click)="router.navigate([userRoute.userOrderHistory])" *ngIf="userService.getSingleRole() =='USER'">Order History</a>
+                        (click)="router.navigate([userRoute.userManagement])" >Profile</a>
                     <a class="dropdown-item text-red-600 hover:cursor-pointer"  href="/auth/login"
                        >Logout</a>
                 </div>

@@ -8,8 +8,9 @@ import { ManageStaffService } from './manage-staff-service/manage-staff.service'
 import { Staff } from './manage-staff-service/model/staff.model';
 import { ManageUsersService } from '../../manage-user-body/manage-users/manage-users-service/manage-users.service';
 import { manageUserPagination } from '../../manage-user-body/manage-users/manage-users-service/model/maange-users-payload.model';
-import { User } from '../../manage-user-body/manage-users/manage-users-service/model/user.model';
+import { User, UserPaginationPayload } from '../../manage-user-body/manage-users/manage-users-service/model/user.model';
 import { UserService } from '@shared/service/user-service/user.service';
+import { UserFilter, UserProfileService } from '@shared/service/user-profile-service/user-profile.service';
 
 
 @Component({
@@ -29,33 +30,39 @@ import { UserService } from '@shared/service/user-service/user.service';
 
 
 
-  paginationJson: manageUserPagination = {
-    userType: ['STAFF'],
+  paginationJson: UserPaginationPayload = {
     page: 1,
-    row: 4
+    row: 2
   }
-  fromTime = new Date();
   getStaffSubscriable$ !: Subscription
 
   load = true
 
   
 
-  constructor(public manageUserService: ManageUsersService) {
+  constructor(public userProfileService: UserProfileService,  ) {
     super()
   }
 
   ngOnInit(): void {
+    this.paginationJson.userType = 'ALL'
     this.getPaginatedData();
   }
 
-  navigateToSingle(staff: Staff) {
-    this.sendUserId.emit(staff);
-    this.isInspectingEvent.emit(true)
+  selectedUserTypeToFilter(event: string | null){
+    this.userProfileService.selectedOption = event!
+
+    this.paginationJson.userType = event!
+  
+    this.load = true
+    
+    
+    this.getPaginatedData()
   }
 
   getPaginatedData() {
-    this.getStaffSubscriable$ = this.manageUserService.getData(
+
+    this.getStaffSubscriable$ = this.userProfileService.getUserData(
       this.paginationJson).subscribe(
         (response) => {
           this.staffListPaginated = response.data
@@ -63,7 +70,7 @@ import { UserService } from '@shared/service/user-service/user.service';
 
         this.staffListPaginated.content.forEach((user) => {
           if(user.profilePath){
-            this.imageId$ = this.manageUserService.getUserPicture(user.id).subscribe((imageBlob: Blob) => {
+            this.imageId$ = this.userProfileService.getUserPicture(user.id).subscribe((imageBlob: Blob) => {
              
             this.createImageFromBlob(imageBlob, user.id)
              .then((imageData) => {
@@ -81,11 +88,7 @@ import { UserService } from '@shared/service/user-service/user.service';
 
 
   typedUserToFilter(event: string){
-    if(event.trim() != ''){
       this.paginationJson.name = event
-    }else{
-      this.paginationJson.name = undefined
-    }
     this.load = true
     this.getPaginatedData()
   }

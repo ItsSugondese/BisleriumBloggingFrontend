@@ -80,26 +80,6 @@ export class AuthService extends ServiceCommonVariable{
       console.log("token deleted")
   }
 
-  LoginWithGoogle(credentials: string): Observable<any> {
-    this.isGoogleLogin = true
-    return this.httpClient.post(this.path + "auth/login-with-google", JSON.stringify(credentials),)
-    // const header = new HttpHeaders().set('Content-type', 'application/json');
-    // return this.httpClient.post(this.path + "auth/login-with-google", JSON.stringify(credentials), { headers: header, withCredentials: true })
-    // .pipe(
-    //   catchError(error => {
-    //     this.isGoogleLogin = false;
-    //     console.log("here is error" + error)
-    //     this.snackService.showMessage({
-    //       // label : error.error.message,
-    //       label: error.error.message,
-    //       status: MessageStatus.FAIL
-    //   });
-    //     throw error;
-    //   }),
-    //   finalize(() => this.isGoogleLogin = false)
-    // );
-  }
-
   
 
 

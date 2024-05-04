@@ -14,6 +14,11 @@ import { UserRouteConstant } from 'src/app/constant/routing/user-routing-constan
 import { FoodMenuPagination } from '../management/manage-food-body/manage-foods/manage-foods-service/model/food-menu.payload';
 import { ManageFoodsService } from '../management/manage-food-body/manage-foods/manage-foods-service/manage-foods.service';
 import { CommonVariable } from '@shared/helper/inherit/common-variable';
+import { CommentService } from '../blog-inspect/comment-service/comment.service';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { BlogService } from '../blog-inspect/blog-service/blog.service';
+import { Blog, BlogPagination, BlogReactionPayload } from '../blog-inspect/blog-service/model/blog.model';
+import { ManageStaffService } from '../management/people-management/manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
 
 @Component({
   selector: 'app-user-order',
@@ -21,85 +26,183 @@ import { CommonVariable } from '@shared/helper/inherit/common-variable';
   styleUrls: ['./user-order.component.scss']
 })
 export class UserOrderComponent extends CommonVariable implements OnInit, OnDestroy {
-  historyData !: UserOrderHistory[]
-  collapsed !: boolean;
-  getFoodPicture$!: Subscription
-  getFoodMenu$!: Subscription
-  paginationJson : UserOrderHistoryPagination = {
-    fromDate: '2024-01-01',
-      toDate: '2024-01-31',
-      row: 10,
-      page: 1,
-  }
-  foodMenuPaginationJson : FoodMenuPagination = {
-    page: 1,
-    row: 10,
-  }
-  fromTime = new Date();
-  getOrderHistorySubscriable$ !: Subscription
+ 
+  visible = false
 
-  imageDataMap: { [key: number]: string } = {};
-  selectedOrder !: UserOrderHistory
+  foodMenuFetch$ !: Subscription
+  getUserPicture$ !: Subscription
+  reactBlog$ !: Subscription
+  postComment$ !: Subscription
+  foodMenuList !: Blog[]
+  imageDataMap: { [key: string]: string } = {};
 
-  constructor(public userOrderService : UserOrderService, private foodService: ManageFoodsService,
-    private sideNavService: SidenavService, private router: Router) {
+
+  blogPagination !: BlogPagination
+
+  reactionPayload !: BlogReactionPayload
+  deleteBlogPopUp = false
+  selectedBlog : Blog | null = null
+ 
+
+ 
+
+  constructor(public blogService: BlogService, private router: Router,
+    private staffService: ManageStaffService
+  ) {
       super()
 
   }
 
   
   ngOnInit(): void {
-    this.getPaginatedData();
+    this.blogPagination = {
+      page: 1,
+      row: 10,
+sort: this.blogService.defaltFoodSelect,
+      name:  '',
+      ofUser: true
+    }
   }
+
+
+
+  afterUpdate(event : boolean){
+    this.visible = false; 
+    // this.selectedComment = null;
+    if(event){
+      this.getBlog()
+    }
+  }
+
+
+  deleteBlog(){
+    this.postComment$ = this.blogService.deleteBlog(this.selectedBlog?.id!).subscribe(
+      (res) => {
+        this.deleteBlogPopUp = false;
+        this.getBlog()
+      },
+    )
+  }
+  
 
 
   
- 
-  toggleOrderDetailsPopUp(orderDetails: UserOrderHistory){
-    this.userOrderService.setOrderedFood(orderDetails)
-    this.router.navigate(['/' + UserRouteConstant.homepage]);
+  navigateToDetails(id: number){
+    this.router.navigate([UserRouteConstant.blogView, id])
   }
 
-  cancelOrder(){
+  public getBlog(){
     
+    this.foodMenuFetch$ = this.blogService.getBlogPaginated(this.blogPagination).subscribe(
+      (response ) => {
+        
+        this.foodMenuList = response.data.content;
+
+        this.foodMenuList.forEach((menu) => {
+          if(menu.userProfile){
+            this.getUserPicture$ = this.staffService.getUserPicture(menu.userId).subscribe((imageBlob: Blob) => {
+
+
+            createImageFromBlob(imageBlob, menu.id)
+             .then((imageData) => {
+              this.imageDataMap[menu.userId] = imageData;
+              
+          })
+          .catch((error) => {
+              console.log("error when trying to access")
+          });
+          });
+        }
+        }); 
+      }
+    )
   }
 
-  getPaginatedData() {
-    this.getOrderHistorySubscriable$ = this.userOrderService.getData(this.paginationJson).subscribe(
-        (response) => {
-          this.historyData = response.data
-          this.historyData.forEach((orderDetails) => {
-            orderDetails.orderFoodDetails.forEach(
-              (foodItem) => {
-                if(foodItem.photoId){
-                  if(!(foodItem.photoId in  this.imageDataMap)){
-                  this.getFoodPicture$ = this.foodService.getFoodPicture(foodItem.photoId).subscribe((imageBlob: Blob) => {
-      
-      
-                  createImageFromBlob(imageBlob, foodItem.photoId)
-                   .then((imageData) => {
-                    this.imageDataMap[foodItem.photoId] = imageData;
-                })
-                .catch((error) => {
-                    console.log("error when trying to access")
-                });
-                });
-              }
-              }
-              }
-            )
-          }); 
-        }
-      )
+  selectedFromFoodFilter(event: string | null){
+    this.blogPagination.sort = event!
+    this.getBlog()
   }
+
+  react(reactionType: boolean, blogPayload: Blog, index : number){
+    const tempLoad = blogPayload.hasReacted
+    const tempScore = blogPayload.score
+    const payload : BlogReactionPayload = {
+      blogId: blogPayload.id,
+      reaction: reactionType? 'UPVOTE' : 'DOWNVOTE'
+    }
+    if(reactionType == blogPayload.hasReacted){
+      this.foodMenuList[index].hasReacted = null
+      if(reactionType){
+        this.foodMenuList[index].score -= 2
+      }else{
+        this.foodMenuList[index].score += 1
+
+      }
+    }else{
+      console.log(blogPayload.hasReacted)
+      this.foodMenuList[index].hasReacted = reactionType
+      if(tempLoad == null){
+      if(reactionType){
+        this.foodMenuList[index].score += 2
+      }else{
+        this.foodMenuList[index].score -= 1
+      }
+    }else{
+      if(reactionType){
+        this.foodMenuList[index].score += 3
+      }else{
+        this.foodMenuList[index].score -= 3
+      }
+
+    }
+    }
+    this.reactBlog$ = this.blogService.reactBlog(payload).subscribe(
+      (res) => {
+
+      },
+      (onErr) => {
+      this.foodMenuList[index].hasReacted = tempLoad
+      this.foodMenuList[index].score = tempScore
+      }
+    )
+  }
+
+  onRangeSelect(event: Date[]) {
+    const fromDate = event[0];
+    const toDate = event[event.length - 1];
+
+    const fromDateString = fromDate.getFullYear() + '-' + ('0' + (fromDate.getMonth() + 1)).slice(-2) + '-' + ('0' + fromDate.getDate()).slice(-2);
+      const toDateString = toDate.getFullYear() + '-' + ('0' + (toDate.getMonth() + 1)).slice(-2) + '-' + ('0' + toDate.getDate()).slice(-2);
+    this.blogPagination.fromDate = fromDateString
+    this.blogPagination.toDate = toDateString
+
+    this.getBlog()
+}
+
+typedOrderToFilter(event: string){
+    this.blogPagination.name = event
+  
+  this.getBlog();
+}
+
+
+
+
+
+ 
+
 
 
 
 
   ngOnDestroy(): void {
-    if(this.getOrderHistorySubscriable$){
-      this.getOrderHistorySubscriable$.unsubscribe();
+    if (this.foodMenuFetch$) {
+      this.foodMenuFetch$.unsubscribe();
     }
+    if(this.postComment$){
+    this.postComment$.unsubscribe()
+    }
+    
     
   }
 }

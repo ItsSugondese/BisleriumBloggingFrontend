@@ -32,7 +32,7 @@ const routes: Routes = [
     // data: {roles:['ADMIN']}
     canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}
   },
-  {path: ManagementRouteConstant.staffManagement, component : ManageStaffBodyComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
+  {path: ManagementRouteConstant.staffManagement, component : ManageStaffBodyComponent, canActivate:[AuthGuard], data: {roles:['ADMIN', 'BLOGGER']}},
   {path: ManagementRouteConstant.inventoryManagement, component : InventoryManagementBodyComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
   {path: ManagementRouteConstant.addStaff, component : AddStaffComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
   {path: ManagementRouteConstant.orderManagement, component: OrderManagementBodyComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
@@ -40,7 +40,6 @@ const routes: Routes = [
   
   {path: ManagementRouteConstant.onlineOrderManagement, component: OnlineOrdersComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
   {path: ManagementRouteConstant.onsiteOrderManagement, component: OnsiteOrdersComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
-  {path: ManagementRouteConstant.userManagement, component: ManageUserBodyComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
   {path: ManagementRouteConstant.userManagementPayment, component: UserManagementPaymentComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
   {path: ManagementRouteConstant.adminDashboard, component: AdminDashboardComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
   {path: ManagementRouteConstant.staffDashboard, component: StaffDashboardComponent, canActivate:[AuthGuard], data: {roles:['Blogger', 'ADMIN']}},

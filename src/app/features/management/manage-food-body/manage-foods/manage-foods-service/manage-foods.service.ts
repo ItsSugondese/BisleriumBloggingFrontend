@@ -1,16 +1,12 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { BlogPagination, BlogReactionPayload, FoodMenuPagination, ToggleAvailability } from './model/food-menu.payload';
-import { PaginatedData } from 'src/app/constant/data/pagination/pagination.model';
-import { Blog, FoodMenuWithImageData, foodMenu } from './model/food-menu.model';
-import { ResponseData } from 'src/app/constant/data/response-data.model';
-import { BehaviorSubject, catchError, finalize } from 'rxjs';
-import { LoaderService } from 'src/app/shared/service/loader-service/loader.service';
-import { SnackbarService } from 'src/app/templates/snackbar/snackbar-service/snackbar.service';
-import { MessageStatus } from 'src/app/templates/snackbar/snackbar.template.component';
-import { ServiceCommonVariable } from 'src/app/shared/helper/inherit/common-variable-serivce';
 import { EnumItem } from '@shared/model/enums/MapForEnum.model';
+import { BehaviorSubject, catchError, finalize } from 'rxjs';
+import { ResponseData } from 'src/app/constant/data/response-data.model';
+import { ServiceCommonVariable } from 'src/app/shared/helper/inherit/common-variable-serivce';
+import { environment } from 'src/environments/environment';
+import { FoodMenuWithImageData, foodMenu } from './model/food-menu.model';
+import { ToggleAvailability } from './model/food-menu.payload';
 
 export enum FoodFilterHomepageType {
   RECENT = 'Recent',
@@ -123,29 +119,7 @@ public toggleLoading = {
 
 
   ////
-  getBlogPaginated(data : BlogPagination){
-    this.loading = true
-     return this.httpClient.post<ResponseData<PaginatedData<Blog>>>(this.backendUrl + this.moduleName +  "/paginated", data)
-     .pipe(
-      
-      this.handleError()
-      );
-  }
-  getSingleBlog(id : number){
-    this.loading = true
-     return this.httpClient.get<ResponseData<Blog>>(`${this.backendUrl}${this.moduleName}/${id}`)
-     .pipe(
-      this.handleError()
-      );
-  }
-
-  getBlogPicture(id: number) {
-    return this.httpClient.get(`${this.backendUrl}${this.moduleName}/doc/${id}`, { responseType: 'blob' });
-  }
-
-  reactBlog(data: BlogReactionPayload){
-    return this.httpClient.post<ResponseData<any>>(this.backendUrl + this.moduleName +  "/react", data)
-  }
+  
  
 
 }

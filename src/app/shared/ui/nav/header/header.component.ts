@@ -88,7 +88,7 @@ export class HeaderComponent extends CommonVariable implements OnInit, OnDestroy
   }
 
 
-  constructor(private userProfileService: UserProfileService, public userService: UserService,
+  constructor(public userProfileService: UserProfileService, public userService: UserService,
     public router: Router, public sidenavService: SidenavService, public managementNavbarService: ManageOrdersNavbarService,
     public notificationService: NotificationService, private staffService: ManageStaffService) {
     super()
@@ -109,7 +109,7 @@ export class HeaderComponent extends CommonVariable implements OnInit, OnDestroy
     
           this.createImageFromBlob(imageBlob, this.userData.id)
             .then((imageData) => {
-              this.imageMap = imageData;
+              this.userProfileService.imageMap = imageData;
     
             })
             .catch((error) => {
