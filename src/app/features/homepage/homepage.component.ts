@@ -25,7 +25,7 @@ import { Blog, BlogPagination, BlogReactionPayload } from '../blog-inspect/blog-
   styleUrls: ['./homepage.component.scss']
 })
 export class HomepageComponent extends CommonVariable implements OnInit, OnDestroy, AfterViewInit {
-  foodMenuFetch$ !: Subscription
+  blogFetch$ !: Subscription
   getUserPicture$ !: Subscription
   reactBlog$ !: Subscription
   foodMenuList !: Blog[]
@@ -63,7 +63,7 @@ sort: this.blogService.defaltFoodSelect,
 
   public getFoodMenu(){
     
-    this.foodMenuFetch$ = this.blogService.getBlogPaginated(this.blogPagination).subscribe(
+    this.blogFetch$ = this.blogService.getBlogPaginated(this.blogPagination).subscribe(
       (response ) => {
         
         this.foodMenuList = response.data.content;
@@ -166,8 +166,8 @@ typedOrderToFilter(event: string){
 
 
   ngOnDestroy(): void {
-    if (this.foodMenuFetch$) {
-      this.foodMenuFetch$.unsubscribe();
+    if (this.blogFetch$) {
+      this.blogFetch$.unsubscribe();
     }
 
     console.log("Here")

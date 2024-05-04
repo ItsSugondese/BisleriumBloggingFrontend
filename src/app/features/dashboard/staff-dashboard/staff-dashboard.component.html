@@ -1,10 +1,26 @@
-<div id="main-div" class="justify-between pb-2 space-y-5">
+<div id="main-div" class=" pb-2 space-y-5">
 
 
 
 
 
+  
+  <div class="flex justify-between ">
 
+    <div class="form-group flex items-center space-x-2">
+
+      <label for="flexSwitchCheck">All time:</label>
+      <div class="form-check  form-switch flex items-center  ">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" [(ngModel)]="isChecked" (ngModelChange)="onCheckboxChange()">
+      </div>
+    </div>
+
+    <div>
+      <calender-template [dateFilterType]="enumCalenderType.WEEK"
+        (selectedDate)="onRangeSelect($event)"></calender-template>
+
+    </div>
+  </div>
 
 
 
@@ -14,27 +30,31 @@
         <div class="flex-1">
           <div class="container mx-auto py-8">
             <div class="">
-              <span class="text-[#495057] font-semibold text-xl ">Today's sales data</span>
+              <span class="text-[#495057] font-semibold text-xl ">Total Data</span>
             </div>
             
             <!-- Grid for the cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 <!-- Total Paid Amount Card -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-lg font-semibold text-center text-gray-800 mb-2">Total Paid Amount</h2>
-                    <p class="text-3xl font-bold text-center text-red-700">{{currency}} {{revenue.paidAmount}}</p>
+                    <h2 class="text-lg font-semibold text-center text-gray-800 mb-2">Total Blog Posted</h2>
+                    <p class="text-3xl font-bold text-center text-red-700">{{revenue.blog}}</p>
                 </div>
         
                 <!-- Left to Pay Card -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-lg font-semibold text-center text-gray-800 mb-2">Left to Pay</h2>
-                    <p class="text-3xl font-bold text-center text-red-700">{{currency}} {{revenue.leftToPay}}</p>
+                    <h2 class="text-lg font-semibold text-center text-gray-800 mb-2">Total Comments</h2>
+                    <p class="text-3xl font-bold text-center text-red-700"> {{revenue.comments}}</p>
                 </div>
         
                 <!-- Orders Delivered Card -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-lg font-semibold text-center text-gray-800 mb-2">Orders Delivered</h2>
-                    <p class="text-3xl font-bold text-center text-red-700">{{revenue.deliveredOrder}}</p>
+                    <h2 class="text-lg font-semibold text-center text-gray-800 mb-2">Total Upvoted</h2>
+                    <p class="text-3xl font-bold text-center text-red-700">{{revenue.upvote}}</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-center text-gray-800 mb-2">Total downvoted</h2>
+                    <p class="text-3xl font-bold text-center text-red-700">{{revenue.downvote}}</p>
                 </div>
             </div>
         </div>
@@ -42,78 +62,7 @@
       </div>
 
 
-      <div class=" flex  space-x-10 justify-between  h-full w-full" *ngIf="(revenueDataSubscription$ | async)?.data as revenue">
-        <div class="flex-1" *ngIf="(orderDataSubscription$ | async)?.data as order ">
-          <div class="">
-            <span class="text-[#495057] font-semibold text-xl ">Pending Orders<span class="text-sm ">({{orderService.timeDifference}}
-                minutes)</span></span>
-          </div>
-
-          
-
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <div class="flex  items-center justify-center flex-1 bg-white shadow-md rounded-lg py-3">
-              <div class="paid-amount flex flex-col items-center ">
-                <span class=" text-2xl font-bold">{{order.totalPending}}</span>
-                <span class="text-sm">Total</span>
-              </div>
-            </div>
-            <div class="flex items-center hover:cursor-pointer justify-center flex-1 bg-white shadow-md rounded-lg py-3" >
-              <div class="paid-amount flex flex-col items-center">
-                <span class=" text-2xl font-bold">{{order.onsiteOrder.pending}}</span>
-                <span class="text-sm">Onsite</span>
-              </div>
-            </div>
-            <div class="flex items-center hover:cursor-pointer  justify-center flex-1 bg-white shadow-md rounded-lg py-3" (click)="goToManageOrder('Online')">
-              <div class="paid-amount flex flex-col items-center ">
-                <span class=" text-2xl font-bold">{{order.onlineOrder.pending}}</span>
-                <span class="text-sm">Online</span>
-              </div>
-            </div>
-
-
-          </div>
-
-
-        </div>
-      </div>
       
-      
-      
-      <div class=" flex  space-x-10 justify-between  h-full w-full" *ngIf="(foodMenuDataSubscription$ | async)?.data as foodData">
-        <div class="flex-1" *ngIf="(orderDataSubscription$ | async)?.data as order ">
-          <div class="">
-            <span class="text-[#495057] font-semibold text-xl ">Food Menu</span>
-          </div>
-
-         
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <div class="flex  items-center justify-center flex-1 bg-white shadow-md rounded-lg py-3">
-              <div class="paid-amount flex flex-col items-center ">
-                <span class=" text-2xl font-bold">{{foodData.total}}</span>
-                <span class="text-sm">Total Menu</span>
-              </div>
-            </div>
-            <div class="flex items-center hover:cursor-pointer justify-center flex-1 bg-white shadow-md rounded-lg py-3" >
-              <div class="paid-amount flex flex-col items-center">
-                <span class=" text-2xl font-bold">{{foodData.today}}</span>
-                <span class="text-sm">Available</span>
-              </div>
-            </div>
-            <div class="flex items-center hover:cursor-pointer  justify-center flex-1 bg-white shadow-md rounded-lg py-3" (click)="goToManageOrder('Online')">
-              <div class="paid-amount flex flex-col items-center ">
-                <span class=" text-2xl font-bold">{{foodData.notToday}}</span>
-                <span class="text-sm">Not Available</span>
-              </div>
-            </div>
-
-
-          </div>
-        </div>
-      </div>
-
 
     
  
@@ -122,11 +71,136 @@
 
 
   <div>
-    <div class="">
-      <span class="text-[#495057] font-semibold text-xl ">Left to pay users</span>
+    <div class="flex justify-center">
+      <span class="text-[#495057] font-semibold text-xl ">Total Blogs</span>
     </div>
-    <user-payment-management-table-template [row]="3" [showFilter]="false" ></user-payment-management-table-template>
+    <div class="" style="width: 100%;">
+    <p-table 
+    [value]="blogListPaginated.content"
+    #dt1
+    [rows]="blogPagination.row"
+    [loading]="load"
+    *ngIf="blogListPaginated">
+    
+    <ng-template pTemplate="header">
+        <tr class="text-customPrimary">
+            <th style="">
+                <div class="flex align-items-center">
+                    
+                </div>
+            </th>
+            <th style="">
+                <div class="flex align-items-center">
+                    Username
+                </div>
+            </th>
+            <th style="">
+                <div class="flex align-items-center">
+                    Date
+                </div>
+            </th>
+            <th style="" >
+                <div class="flex align-items-center">
+                    Title
+                </div>
+            </th>
+            <th style="" >
+                <div class="flex align-items-center">
+                    Upvote
+                </div>
+            </th>
+            <th style="" >
+                <div class="flex align-items-center">
+                    Downvote
+                </div>
+            </th>
+            <th style="" >
+                <div class="flex align-items-center">
+                    Comments
+                </div>
+            </th>
+            <th style="" >
+                <div class="flex align-items-center">
+                    Score
+                </div>
+            </th>
+            
 
+
+          
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+        <tr>
+            <td>
+                <div class="image-container">
+                    <div class="w-16 h-16 rounded-full overflow-hidden">
+                        <img [src]="imageDataMap[user.id] == null? 'assets/avatar/anon.jpg' : imageDataMap[user.id]" alt='staff image'
+                            class="w-full h-full object-cover" />
+                    </div>
+                </div>
+            </td>
+            <td style="">
+              
+                <span class=" vertical-align-middle">{{ user.username }}</span>
+            </td>
+            <td style="">
+              
+                <span class=" vertical-align-middle">{{ user.postedOn }}</span>
+            </td>
+            <td style="">
+              
+                <span class=" vertical-align-middle">{{ user.title }}</span>
+            </td>
+            <td style="">
+              
+                <span class=" vertical-align-middle">{{ user.upvote }}</span>
+            </td>
+            <td style="">
+              
+                <span class=" vertical-align-middle">{{ user.downvote }}</span>
+            </td>
+            <td style="">
+              
+                <span class=" vertical-align-middle">{{ user.comments }}</span>
+            </td>
+            <td style="">
+              
+                <span class=" vertical-align-middle">{{ user.totalPoint }}</span>
+            </td>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="7">
+                <div class="flex justify-center">
+                    No User found.
+                    
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+</div>
+<tfoot class="flex justify-between   h-full mt-2"  *ngIf="blogListPaginated">
+    <ng-container *ngFor="let data of blogListPaginated.content | paginate: {
+        itemsPerPage : blogPagination.row,
+        currentPage : blogListPaginated.currentPageIndex,
+        totalItems : blogListPaginated.totalElements
+    }; let first= first;">
+    </ng-container>
+    <p>{{blogListPaginated.numberOfElements}} of {{blogListPaginated.totalElements}}
+        items</p>
+
+    <pagination-controls previousLabel="Prev" nextLabel="Next"
+        (pageChange)="onTableDataChange($event)" class="">
+    </pagination-controls>
+
+
+
+
+</tfoot>
   </div>
 
 

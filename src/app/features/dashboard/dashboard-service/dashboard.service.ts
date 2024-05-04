@@ -4,7 +4,7 @@ import { ResponseData } from 'src/app/constant/data/response-data.model';
 import { environment } from 'src/environments/environment';
 import { SalesData, SalesDataPayload } from './model/sales-data.model';
 import { UsersDataPayload, UsersData } from './model/user-data.model';
-import { OrderData, OrderDataPayload } from './model/order-data.model';
+import { OrderData, OrderDataPayload, SumData } from './model/order-data.model';
 import { RevenueData, RevenueDataPayload } from './model/revenue-data.model';
 import { FoodMenuData, FoodMenuDataPayload } from './model/food-menu-data.model';
 import { TableData, TableDataPayload } from './model/table-data.model';
@@ -34,6 +34,9 @@ export class DashboardService {
   }
   getRevenueData(payload: RevenueDataPayload){
     return this.httpClient.post<ResponseData<RevenueData>>(`${this.backendUrl}admin/${this.moduleName}/revenue-data`, payload)
+  }
+  getSumData(payload: RevenueDataPayload){
+    return this.httpClient.post<ResponseData<SumData>>(`${this.backendUrl}${this.moduleName}/sum-data`, payload)
   }
   getFoodMenuData(payload: FoodMenuDataPayload){
     return this.httpClient.post<ResponseData<FoodMenuData>>(`${this.backendUrl}admin/${this.moduleName}/food-menu-data`, payload)

@@ -2,6 +2,14 @@ export interface OrderDataPayload{
     timeDifference : number,
 }
 
+export interface SumData {
+    blog: number;
+    comments: number;
+    upvote: number;
+    downvote: number
+}
+
+
 export interface OrderData {
     totalOrder: number;
     totalPending: number;

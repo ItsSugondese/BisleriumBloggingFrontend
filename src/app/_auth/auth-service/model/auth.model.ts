@@ -7,8 +7,10 @@ export interface ValidateToken{
 }
 
 export interface ChangePassword{
-    resetToken: string;
-    password: string
+    token: string;
+    password: string;
+    confirmPassword: string;
+    email : string;
 }
 
 export interface LoginModel{

@@ -14,6 +14,9 @@ export interface Blog {
     hasReacted: boolean | null;
     imageUrl: string;
     myBlog : boolean;
+    upvote: number;
+    downvote: number;
+    totalPoint: number;
     commentDetails: Comments[]
 }
 
@@ -22,7 +25,8 @@ export interface BlogPagination extends paginationPayload{
     fromDate ?: string;
     toDate ?: string;
     name ?: string
-    ofUser ?: boolean
+    ofUser ?: boolean;
+    isAll ?: boolean
 }
 
 export interface BlogReactionPayload {

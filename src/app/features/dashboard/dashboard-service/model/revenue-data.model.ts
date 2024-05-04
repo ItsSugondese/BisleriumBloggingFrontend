@@ -1,6 +1,7 @@
 export interface RevenueDataPayload {
     fromDate?: string,
-    toDate?: string
+    toDate?: string,
+    isAll ?: boolean
   }
 
 export interface RevenueData {

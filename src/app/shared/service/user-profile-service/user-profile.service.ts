@@ -26,6 +26,7 @@ export class UserProfileService extends ServiceCommonVariable {
   backendUrl = environment.apiUrl
   imageMap !: string | null
   pictureLoading = false
+  deletingUser = false;
 
   options: EnumItem[] = this.enumToEnumItems(UserFilter)
    selectedOption = Object.keys(UserFilter)[0]
@@ -55,7 +56,7 @@ export class UserProfileService extends ServiceCommonVariable {
     return this.httpClient.get<ResponseData<User>>(`${this.backendUrl}${this.moduleName}/profile`);
   }
 
-  getUserPicture(id: number) {
+  getUserPicture(id: any) {
     this.pictureLoading = true
     return this.httpClient.get(this.backendUrl + this.moduleName +'/photo/' + id, { responseType: 'blob' })
     .pipe(
@@ -64,6 +65,27 @@ export class UserProfileService extends ServiceCommonVariable {
         throw error;
       }),
       finalize(() => this.pictureLoading = false)
+    );
+  }
+  
+  forgotPassword(email: any) {
+    this.deletingUser = true
+    return this.httpClient.get(`${this.backendUrl}auth/forgot-password/${email}`)
+    .pipe(
+      catchError(error => {
+        throw error;
+      }),
+      finalize(() => this.deletingUser = false)
+    );
+  }
+  deleteUser(id: any) {
+    this.deletingUser = true
+    return this.httpClient.delete(`${this.backendUrl}${this.moduleName}/${id}`)
+    .pipe(
+      catchError(error => {
+        throw error;
+      }),
+      finalize(() => this.deletingUser = false)
     );
   }
 

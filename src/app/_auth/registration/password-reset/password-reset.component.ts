@@ -15,9 +15,10 @@ import { ManagementRouteConstant } from 'src/app/constant/routing/management-rou
 export class PasswordResetComponent extends CommonVariable implements OnInit, OnDestroy{
 
   token !: string
+  email !: string
   form = this.fb.group({
-    password: ['', [Validators.required]],
-    reEntered: ['', [Validators.required]],
+    password: ['', [Validators.required, this.passwordValidator]],
+    confirmPassword: ['', [Validators.required, this.passwordValidator]],
   });
   reEntered !: string
   changePasswordSubscription$ !: Subscription
@@ -34,13 +35,7 @@ export class PasswordResetComponent extends CommonVariable implements OnInit, On
     this.route.params.subscribe(
       (params) => {
         this.token = params['token']
-        const val : ValidateToken = {
-          resetToken: this.token
-        }
-        this.verifyTokenSubscription$ = this.authService.validatePasswordToken(val).subscribe(
-          (res) => {this.verifyTokenSubscription$.unsubscribe()},
-          (err) => this.router.navigate(['/' + ManagementRouteConstant.forgotPassword])
-        )
+        this.email = params['email']
       }
     );
   }
@@ -49,8 +44,10 @@ export class PasswordResetComponent extends CommonVariable implements OnInit, On
     //this.formSubmitAttempt = false;
     if (this.form.valid) {
       const val : ChangePassword = {
-        resetToken: this.token,
-        password: this.formValue('password')?.value
+        token: this.token,
+        email: this.email,
+        password: this.formValue('password')?.value,
+        confirmPassword: this.formValue('confirmPassword')?.value,
       }
     this.changePasswordSubscription$ =   this.authService.resetPassword(val).subscribe(
       (res) => {

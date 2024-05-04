@@ -96,7 +96,6 @@ import { UserFilter, UserProfileService } from '@shared/service/user-profile-ser
   onTableDataChange(event: any) {
     this.paginationJson.page = event
     this.getPaginatedData();
-
   }
 
   onSelectedDropdown(event: any) {

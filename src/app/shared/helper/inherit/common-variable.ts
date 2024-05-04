@@ -4,6 +4,8 @@ import { CenterItems } from "src/app/constant/class/display-center.model";
 import { UserRouteConstant } from "src/app/constant/routing/user-routing-constant.model";
 import { CalenderType } from "src/app/templates/calender/calender.template.componenet";
 import { MessageStatus } from "src/app/templates/snackbar/snackbar.template.component";
+import { AbstractControl } from '@angular/forms';
+
 
 export class CommonVariable {
   enumCalenderType = CalenderType
@@ -50,6 +52,22 @@ export class CommonVariable {
 
    enumToEnumItems(enumObject: Record<string, string>): EnumItem[] {
     return Object.keys(enumObject).map(key => ({ key, value: enumObject[key] }));
+  }
+
+   passwordValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    if (!control.value) {
+      return null;
+    }
+  
+    const hasUppercase = /[A-Z]/.test(control.value);
+    const hasDigit = /\d/.test(control.value);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(control.value);
+  
+    if (!hasUppercase || !hasDigit || !hasSpecialChar) {
+      return { 'passwordRequirements': true };
+    }
+  
+    return null;
   }
   
 }

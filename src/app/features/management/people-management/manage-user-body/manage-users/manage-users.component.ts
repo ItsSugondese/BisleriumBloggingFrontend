@@ -9,6 +9,7 @@ import { CommonVariable } from 'src/app/shared/helper/inherit/common-variable';
 import { PaginatedData } from 'src/app/constant/data/pagination/pagination.model';
 import { UserProfileService } from '@shared/service/user-profile-service/user-profile.service';
 import { ManageStaffService } from '../../manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
+import { ManagementRouteConstant } from 'src/app/constant/routing/management-routing-constant.model';
 
 
 @Component({
@@ -33,7 +34,7 @@ export class ManageUsersComponent extends CommonVariable implements OnInit, OnDe
 
 
   constructor(public manageUserService: ManageUsersService, public userProfileService: UserProfileService,
-    private staffService: ManageStaffService
+    private staffService: ManageStaffService, private router: Router
   ) {
     super()
   }
@@ -57,6 +58,17 @@ export class ManageUsersComponent extends CommonVariable implements OnInit, OnDe
   }
 
 
+  deleteUser(){
+    this.userSubscription$ = this.userProfileService.deleteUser(this.userData.id).subscribe(
+      (res) => {
+        this.router.navigate([ManagementRouteConstant.login], { replaceUrl: true });
+      }
+    )
+  }
+  
+  changePassword(){
+    this.userSubscription$ = this.userProfileService.forgotPassword(this.userData.email).subscribe()
+  }
 
 
 
