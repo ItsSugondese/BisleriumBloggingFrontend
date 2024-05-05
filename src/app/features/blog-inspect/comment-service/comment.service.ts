@@ -3,7 +3,7 @@ import { ResponseData } from 'src/app/constant/data/response-data.model';
 import { ServiceCommonVariable } from '@shared/helper/inherit/common-variable-serivce';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { CommentPayload, CommentReactionPayload } from './model/comment.model';
+import { CommentPayload, CommentReactionPayload, Comments } from './model/comment.model';
 import { catchError, finalize } from 'rxjs';
 
 @Injectable({
@@ -35,6 +35,14 @@ export class CommentService extends ServiceCommonVariable {
           throw error;
         }),
         finalize(() => this.deletingComment = false)
+      );
+    }
+
+    getCommentHistory(id: number){
+      this.loading = true
+      return this.httpClient.get<ResponseData<Comments[]>>(`${this.backendUrl}${this.moduleName}/history/${id}`)
+      .pipe(
+        this.handleError()
       );
     }
 }

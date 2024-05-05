@@ -28,14 +28,19 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
   postComment$ !: Subscription
   reactBlog$ !: Subscription
   authorImage !: string
-  blogImage !: string
+  blogImage !: string | null
   imageDataMap: { [key: string]: string } = {};
+  historyDataMap: { [key: number]: string } = {};
   writtenComment : string | null =null
   selectedComment : Comments | null = null
   deleteBlogPopUp = false
   blogEditVisible = false;
+  historyList : Blog[] = []
+  commentHistoryList : Comments[] = []
 
   visible = false;
+  historyPopUp = false;
+  commentHistoryPopUp = false;
   constructor(private route: ActivatedRoute, public blogService: BlogService,
     private userService : ManageStaffService, public commentService: CommentService,
     public location: Location
@@ -59,6 +64,42 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
       this.getBlog()
     }
   }
+
+  fetchBlogHistory(){
+    this.historyPopUp = true; 
+    this.blogFetch$ = this.blogService.getBlogHistory(this.blog.id).subscribe(
+      (res) => {
+        this.historyList = res.data
+        this.historyList.forEach((menu) => {
+          if(menu.imageUrl){
+            this.getUserPicture$ = this.blogService.getBlogPicture(menu.historyId).subscribe((imageBlob: Blob) => {
+
+
+            this.createImageFromBlobNoPhoto(imageBlob)
+             .then((imageData) => {
+              this.historyDataMap[menu.historyId] = imageData;
+              
+          })
+          .catch((error) => {
+              console.log("error when trying to access")
+          });
+          });
+        }
+        }); 
+      }
+    )
+  }
+
+
+  fetchCommentHistory(commentId: number){
+    this.commentHistoryPopUp = true; 
+    this.blogFetch$ = this.commentService.getCommentHistory(commentId).subscribe(
+      (res) => {
+        this.commentHistoryList = res.data
+      }
+    )
+  }
+
   afterUpdateBlog(event : boolean){
     this.blogEditVisible = false; 
     if(event){
@@ -87,7 +128,7 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
       }
 
         if(this.blog.imageUrl){
-          this.getBlogPicture$ = this.blogService.getBlogPicture(this.blog.id).subscribe((imageBlob: Blob) => {
+          this.getBlogPicture$ = this.blogService.getBlogPicture(this.blog.historyId).subscribe((imageBlob: Blob) => {
             this.createImageFromBlobNoPhoto(imageBlob)
              .then((imageData) => {
               this.blogImage = imageData;
@@ -116,6 +157,15 @@ export class BlogInspectComponent extends CommonVariable implements OnInit, OnDe
           });
         }
         }); 
+      }
+    )
+  }
+
+  removeImage(){
+    this.postComment$ = this.blogService.deleteBlogImage(this.blog.historyId).subscribe(
+      (res) => {
+        this.blogImage = null;
+        this.getBlog()
       }
     )
   }

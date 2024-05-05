@@ -8,6 +8,7 @@ import { BlogPagination, Blog, BlogReactionPayload } from './model/blog.model';
 import { EnumItem } from '@shared/model/enums/MapForEnum.model';
 import { FoodFilterType } from '../../management/manage-food-body/manage-foods/manage-foods-service/manage-foods.service';
 import { catchError, finalize } from 'rxjs';
+import { ResolveData } from '@angular/router';
 
 export enum FoodFilterHomepageType {
   RECENT = 'Recent',
@@ -27,6 +28,7 @@ export class BlogService extends ServiceCommonVariable {
   defaltFoodSelect : string = 'RECENT'
 
   deletingBlog = false;
+  gettingHistory = false;
   constructor(private httpClient : HttpClient,) { 
       super()
     }
@@ -61,6 +63,17 @@ export class BlogService extends ServiceCommonVariable {
     return this.httpClient.get(`${this.backendUrl}${this.moduleName}/doc/${id}`, { responseType: 'blob' });
   }
 
+  getBlogHistory(id: number) {
+    this.gettingHistory = true
+    return this.httpClient.get<ResponseData<Blog[]>>(`${this.backendUrl}${this.moduleName}/history/${id}`)
+    .pipe(
+      catchError(error => {
+        throw error;
+      }),
+      finalize(() => this.gettingHistory = false)
+    );
+  }
+
   reactBlog(data: BlogReactionPayload){
     return this.httpClient.post<ResponseData<any>>(this.backendUrl + this.moduleName +  "/react", data)
   }
@@ -68,6 +81,16 @@ export class BlogService extends ServiceCommonVariable {
   deleteBlog(id: number){
     this.deletingBlog = true
     return this.httpClient.delete<ResponseData<any>>(`${this.backendUrl}${this.moduleName}/${id}`)
+    .pipe(
+      catchError(error => {
+        throw error;
+      }),
+      finalize(() => this.deletingBlog = false)
+    );
+  }
+  deleteBlogImage(id: number){
+    this.deletingBlog = true
+    return this.httpClient.delete<ResponseData<any>>(`${this.backendUrl}${this.moduleName}/doc/${id}`)
     .pipe(
       catchError(error => {
         throw error;

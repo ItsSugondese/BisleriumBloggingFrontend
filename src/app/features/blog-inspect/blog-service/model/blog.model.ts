@@ -17,6 +17,7 @@ export interface Blog {
     upvote: number;
     downvote: number;
     totalPoint: number;
+    historyId : number;
     commentDetails: Comments[]
 }
 

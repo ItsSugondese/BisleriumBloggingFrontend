@@ -88,7 +88,7 @@ export class PostBlogComponent extends CommonVariable implements OnInit, OnDestr
     @Output() visibleChange: EventEmitter<boolean> = new EventEmitter();
 
      imageId !: number | null
-     @Input() imageUrl !: string
+     @Input() imageUrl !: string | null
   postBlog$ !: Subscription
   blogImage$ !: Subscription
 
