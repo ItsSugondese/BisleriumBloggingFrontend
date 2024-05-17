@@ -1,4 +1,5 @@
-<div id="main-div">
+<div id="main-div" infiniteScroll [infiniteScrollDistance]="0"
+[infiniteScrollThrottle]="0" (scrolled)="onScroll()">
   
     <div>
       <div id="filter-header" class="flex w-full justify-between items-center mb-3 bg-white p-2 rounded-lg">
@@ -23,12 +24,16 @@
     
     
     <!-- shows food list -->
+
     <div class="flex justify-end pr-4 " >
-        <add-button-template text="Create a Post" (clicked)="visible=true"></add-button-template>
-    </div>
-    <div *ngIf="blogService.loading; else loaded" [class]="centerItems">
+      <add-button-template text="Create a Post" (clicked)="visible=true"></add-button-template>
+  </div>
+
+    <div *ngIf="blogService.loading && foodMenuList.length ==0; else loaded" [class]="centerItems">
       <mat-spinner style="color: red;"></mat-spinner>
     </div>
+  
+  
   
     <ng-template #loaded>
     <div  *ngIf="foodMenuList.length > 0">

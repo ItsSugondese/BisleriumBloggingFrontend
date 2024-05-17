@@ -19,7 +19,7 @@ export class NotificationService extends ServiceCommonVariable {
   }
 
   getNewNotificationCount(){
-    return this.httpClient.get<ResponseData<number>>(`${this.backendUrl}${this.moduleName}/new-notification-count`)
+    return this.httpClient.get<ResponseData<number>>(`${this.backendUrl}${this.moduleName}/count`)
   }
 
   getUserNotifications(payload: NotificationPagination){

@@ -8,6 +8,7 @@ import { SnackbarService } from "../templates/snackbar/snackbar-service/snackbar
 import { MessageStatus } from "../templates/snackbar/snackbar.template.component";
 import { ResponseData } from "../constant/data/response-data.model";
 import { Crud } from "src/enums/backend/curd.enums";
+import { ManagementRouteConstant } from "../constant/routing/management-routing-constant.model";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor, OnInit {
@@ -39,7 +40,16 @@ export class AuthInterceptor implements HttpInterceptor, OnInit {
             
             catchError(
                 (err: HttpErrorResponse) => {
-                    if (err.error.message) {
+                    if(err.status == 401){
+                        console.log("here")
+                        this.snackService.showMessage({
+                            label: "Must be login first",
+                            status: MessageStatus.FAIL
+                        });
+                        this.router.navigate([ManagementRouteConstant.login])
+
+                    } else if (err.error.message) {
+                        console.log("hello")
                         this.snackService.showMessage({
                             // label : error.error.message,
                             label: err.error.message,
@@ -51,7 +61,8 @@ export class AuthInterceptor implements HttpInterceptor, OnInit {
                         } else {
                             this.loginService.setFormHeader("Must Login first to access the page", "Red")
                         }
-                        this.router.navigate(['/login'])
+                        console.log("Hello")
+                        this.router.navigate([ManagementRouteConstant.login])
                     } else if (err.status == 403) {
                         this.router.navigate(['/auth/login'])
                     } else if (err.status == 0) {
@@ -65,6 +76,8 @@ export class AuthInterceptor implements HttpInterceptor, OnInit {
                             status: MessageStatus.FAIL
                         });
                     }
+
+                    
                     return throwError(err)
                 }
             ),

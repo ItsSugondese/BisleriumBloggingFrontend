@@ -8,7 +8,7 @@
         </div>
     </ng-template>
 
-    <div *ngIf="userService.getSingleRole()?.toUpperCase() !='BLOGGER' && !sidenavService.collapsed"></div>
+    <div *ngIf="userService.getSingleRole()?.toUpperCase() =='USER'"></div>
 
     
 
@@ -19,11 +19,24 @@
                     <div [routerLink]="'/' + data.routeLink"
                         class=" first:ml-0 ml-2 hover:cursor-pointer text-lg h-full pb-2" routerLinkActive="active"
                         [routerLinkActiveOptions]="{exact:true} " title={{data.label}}>
-                        {{data.label}}
+                        <span>{{data.label}}</span>
                     </div>
                 </ng-container>
             </div>
         </div>
+        <div class="header-nav h-full "  *ngIf="userService.getSingleRole()?.toUpperCase() =='ADMIN'">
+            <div class="flex border-b-2 border-b-[#F0F0F0]">
+                
+
+                    <div [routerLink]="'staff/dashboard'"
+                        class=" first:ml-0 ml-2 hover:cursor-pointer text-lg h-full pb-2" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{exact:true} " title='Homepage' *ngIf="shouldShowHomepage()">
+                       <span>Homepage</span>
+                    </div>
+            </div>
+        </div>
+
+        
 
         
 
@@ -35,7 +48,7 @@
     <div class="dropdown">
 
 
-        <div class="pr-6   py-1" *ngIf="userData">
+        <div class="pr-6   py-1" *ngIf="userData; else surfer">
             <div class="header-right-content flex items-center justify-center">
                 <div class="hover:cursor-pointer notification h-full flex items-center text-xl"
                     (click)="isOpen = !isOpen; appendData()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
@@ -101,10 +114,22 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item hover:cursor-pointer" 
                         (click)="router.navigate([userRoute.userManagement])" >Profile</a>
-                    <a class="dropdown-item text-red-600 hover:cursor-pointer"  href="/auth/login"
+                        
+                        <div (click)="userService.clear()">
+                    <a class="dropdown-item text-red-600 hover:cursor-pointer"  href="/_"
                        >Logout</a>
+                    </div>
                 </div>
             </div>
         </div>
+        <ng-template #surfer>
+            <div class="flex items-center pr-6   py-1">
+                <button class="bg-[#A62A22] text-white inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50  bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                (click)="router.navigate(['/auth/login'])" >
+                     Login
+                   </button>
+
+            </div>
+        </ng-template>
     </div>
 </div>

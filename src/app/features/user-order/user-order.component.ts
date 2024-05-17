@@ -33,7 +33,7 @@ export class UserOrderComponent extends CommonVariable implements OnInit, OnDest
   getUserPicture$ !: Subscription
   reactBlog$ !: Subscription
   postComment$ !: Subscription
-  foodMenuList !: Blog[]
+  foodMenuList : Blog[] = []
   imageDataMap: { [key: string]: string } = {};
 
 
@@ -42,6 +42,8 @@ export class UserOrderComponent extends CommonVariable implements OnInit, OnDest
   reactionPayload !: BlogReactionPayload
   deleteBlogPopUp = false
   selectedBlog : Blog | null = null
+  blogPaginatedData !: PaginatedData<Blog>
+
  
 
  
@@ -57,7 +59,7 @@ export class UserOrderComponent extends CommonVariable implements OnInit, OnDest
   ngOnInit(): void {
     this.blogPagination = {
       page: 1,
-      row: 10,
+      row: 4,
 sort: this.blogService.defaltFoodSelect,
       name:  '',
       ofUser: true
@@ -85,6 +87,12 @@ sort: this.blogService.defaltFoodSelect,
   }
   
 
+  onScroll = () => {
+    if (this.blogPaginatedData.totalPages != this.blogPagination.page) {
+      this.blogPagination.page++
+      this.getBlog()
+    }
+  }
 
   
   navigateToDetails(id: number){
@@ -92,11 +100,10 @@ sort: this.blogService.defaltFoodSelect,
   }
 
   public getBlog(){
-    
     this.foodMenuFetch$ = this.blogService.getBlogPaginated(this.blogPagination).subscribe(
       (response ) => {
-        
-        this.foodMenuList = response.data.content;
+        this.blogPaginatedData = response.data;
+        this.foodMenuList = [...this.foodMenuList, ...this.blogPaginatedData.content]
 
         this.foodMenuList.forEach((menu) => {
           if(menu.userProfile){
@@ -119,6 +126,7 @@ sort: this.blogService.defaltFoodSelect,
   }
 
   selectedFromFoodFilter(event: string | null){
+    this.foodMenuList = []
     this.blogPagination.sort = event!
     this.getBlog()
   }
@@ -168,6 +176,7 @@ sort: this.blogService.defaltFoodSelect,
   }
 
   onRangeSelect(event: Date[]) {
+    this.foodMenuList = []
     const fromDate = event[0];
     const toDate = event[event.length - 1];
 

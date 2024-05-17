@@ -17,6 +17,7 @@ import { NotificationPagination } from '@shared/service/notification-service/mod
 import { NotificationModel } from '@shared/service/notification-service/model/notification.model';
 import { PaginatedData } from 'src/app/constant/data/pagination/pagination.model';
 import { ManageStaffService } from 'src/app/features/management/people-management/manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
+import { SignalRService } from 'src/app/features/blog-inspect/signel-r-service/signal-r.service';
 
 enum HeaderNav {
   HOMEPAGE = "Homepage",
@@ -63,6 +64,7 @@ export class HeaderComponent extends CommonVariable implements OnInit, OnDestroy
 
 
   appendData = () => {
+    this.notificationFetch()
     this.notificationsSubscription$ = this.notificationService.getUserNotifications(this.notificationPayload).subscribe(
       (response) => {
         this.notifications = [...this.notifications, ...response.data.content];
@@ -90,12 +92,16 @@ export class HeaderComponent extends CommonVariable implements OnInit, OnDestroy
 
   constructor(public userProfileService: UserProfileService, public userService: UserService,
     public router: Router, public sidenavService: SidenavService, public managementNavbarService: ManageOrdersNavbarService,
-    public notificationService: NotificationService, private staffService: ManageStaffService) {
+    public notificationService: NotificationService, private staffService: ManageStaffService,
+  private signalrService: SignalRService) {
     super()
   }
 
 
   ngOnInit(): void {
+    // this.signalrService.startConnection();
+
+    if(this.userService.getSingleRole() != 'USER'){
     this.userSubscription$ = this.userProfileService.getUserProfile().subscribe(
       (res) => {
         this.userData = res.data
@@ -122,13 +128,28 @@ export class HeaderComponent extends CommonVariable implements OnInit, OnDestroy
 
       }
     )
+  }
+  this.notificationFetch()
+
+  setInterval(() => {
+    this.notificationFetch()
+  }, 3000);
+  
+    
+
+  }
+
+  notificationFetch(){
     this.notificationCountSubscription$ = this.notificationService.getNewNotificationCount();
     this.notificationPayload = {
       page: 1,
       row: 6
     }
-
   }
+  shouldShowHomepage(): boolean {
+    // Check if the current URL matches your condition
+    return !this.router.url.includes(ManagementRouteConstant.staffDashboard);
+}
 
   updateSelectedNavbar(value: string) {
     this.selectedNavbar = value as HeaderNav;

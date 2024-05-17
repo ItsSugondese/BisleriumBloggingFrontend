@@ -76,7 +76,7 @@
   
               <button type="password"  id="password-input" name="search" class="p-3 py-2 text-xl rounded-full bg-customPrimary text-white w-full 
                 focus:outline-none border-2 border-transparent focus:border-2 focus:border-customPrimary"
-              placeholder="Your Password" [disabled]="form.invalid" [class.disabled-button]="form.invalid" > Login </button>
+              placeholder="Your Password" [disabled]="form.invalid" [class.disabled-button]="form.invalid" > Register </button>
             </div>
         </form>
       </div>
@@ -93,7 +93,7 @@
   
   
     <div class="mt-4">
-      <clean-button-template text="Register" (clicked)="router.navigate(['/' + mgmtRoute.register])" data-toggle="modal" data-target="#finalPopUpModal" data-whatever="@mdo"></clean-button-template>
+      <clean-button-template text="Login" (clicked)="router.navigate(['/' + mgmtRoute.login])" data-toggle="modal" data-target="#finalPopUpModal" data-whatever="@mdo"></clean-button-template>
   
     </div>
     </div>

@@ -16,6 +16,7 @@ import { CommonVariable } from '@shared/helper/inherit/common-variable';
 import { ManageStaffService } from '../management/people-management/manage-staff-body/manage-staff/manage-staff-service/manage-staff.service';
 import { BlogService } from '../blog-inspect/blog-service/blog.service';
 import { Blog, BlogPagination, BlogReactionPayload } from '../blog-inspect/blog-service/model/blog.model';
+import { PaginatedData } from 'src/app/constant/data/pagination/pagination.model';
 
 
 
@@ -28,8 +29,9 @@ export class HomepageComponent extends CommonVariable implements OnInit, OnDestr
   blogFetch$ !: Subscription
   getUserPicture$ !: Subscription
   reactBlog$ !: Subscription
-  foodMenuList !: Blog[]
+  foodMenuList : Blog[] = []
   imageDataMap: { [key: string]: string } = {};
+  blogPaginatedData !: PaginatedData<Blog>
 
 
   blogPagination !: BlogPagination
@@ -45,13 +47,12 @@ super()
   ngAfterViewInit(): void {
     setTimeout(() => {
     }, 4000); // Snackbar duration
-  
   }
 
   ngOnInit(): void {
     this.blogPagination = {
       page: 1,
-      row: 10,
+      row: 4,
 sort: this.blogService.defaltFoodSelect,
       name:  ''
     }
@@ -65,8 +66,10 @@ sort: this.blogService.defaltFoodSelect,
     
     this.blogFetch$ = this.blogService.getBlogPaginated(this.blogPagination).subscribe(
       (response ) => {
-        
-        this.foodMenuList = response.data.content;
+        this.blogPaginatedData = response.data;
+        this.foodMenuList = [...this.foodMenuList, ...this.blogPaginatedData.content]
+
+        // this.foodMenuList = response.data.content;
 
         this.foodMenuList.forEach((menu) => {
           if(menu.userProfile){
@@ -89,8 +92,16 @@ sort: this.blogService.defaltFoodSelect,
   }
 
   selectedFromFoodFilter(event: string | null){
+    this.setPageAndListToRestart()
     this.blogPagination.sort = event!
     this.getFoodMenu()
+  }
+
+  onScroll = () => {
+    if (this.blogPaginatedData.totalPages != this.blogPagination.page) {
+      this.blogPagination.page++
+      this.getFoodMenu()
+    }
   }
 
   react(reactionType: boolean, blogPayload: Blog, index : number){
@@ -109,7 +120,6 @@ sort: this.blogService.defaltFoodSelect,
 
       }
     }else{
-      console.log(blogPayload.hasReacted)
       this.foodMenuList[index].hasReacted = reactionType
       if(tempLoad == null){
       if(reactionType){
@@ -138,6 +148,7 @@ sort: this.blogService.defaltFoodSelect,
   }
 
   onRangeSelect(event: Date[]) {
+    this.setPageAndListToRestart()
     const fromDate = event[0];
     const toDate = event[event.length - 1];
 
@@ -150,10 +161,18 @@ sort: this.blogService.defaltFoodSelect,
 }
 
 typedOrderToFilter(event: string){
+  this.foodMenuList = []
+
     this.blogPagination.name = event
   
   this.getFoodMenu();
 }
+
+setPageAndListToRestart(){
+  this.foodMenuList = []
+  this.blogPagination.page = 1
+}
+
 
 
 

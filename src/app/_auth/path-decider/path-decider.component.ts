@@ -16,14 +16,14 @@ export class PathDeciderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(this.userSerivce.getSingleRole() == null){
+      this.userSerivce.setRoles("USER")
+    }
     let role = this.userSerivce.getSingleRole()
-    if(role == 'ADMIN'){
-      this.router.navigate(['/' + ManagementRouteConstant.adminDashboard])
-    }else if(role?.toUpperCase() == 'BLOGGER'){
+    if(role?.toUpperCase() == 'ADMIN'){
+      this.router.navigate(['/' + ManagementRouteConstant.staffDashboard])
+    }else {
         this.router.navigate(['/' + UserRouteConstant.homepage])
-      }else{
-        this.router.navigate(['/' + ManagementRouteConstant.login])
-
       }
   }
 

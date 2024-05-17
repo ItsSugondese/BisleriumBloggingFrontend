@@ -14,7 +14,7 @@ import { CommentPayload, Comments } from 'src/app/features/blog-inspect/comment-
     <!-- Header Row -->
     <ng-template pTemplate="header">
       <div class="d-flex  justify-content-between align-items-center">
-        <div class="h4">Make Announcement</div>
+        <div class="h4">Update Comment</div>
       </div>
     </ng-template>
     <div *ngIf="commentService.loading">

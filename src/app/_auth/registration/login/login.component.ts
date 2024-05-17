@@ -69,9 +69,10 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.userService.setToken(result.data.jwtToken);
           this.userService.setRoles(result.data.roles);
           this.userService.setUsername(result.data.username);
+          this.userService.setUserId(result.data.userId);
           const role = result.data.roles;
           if(role.toUpperCase() == 'ADMIN'){
-          this.router.navigate(['/' + ManagementRouteConstant.adminDashboard])
+          this.router.navigate(['/' + ManagementRouteConstant.staffDashboard])
         }else if(role.toUpperCase() == 'Blogger'){
             this.router.navigate(['/' + ManagementRouteConstant.staffDashboard])
           }else{

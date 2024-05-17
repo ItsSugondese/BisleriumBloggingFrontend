@@ -10,6 +10,8 @@ import { MaterialModule } from '@shared/module/material.module';
 import { NgprimeModule } from '@shared/module/ngprime.module';
 import { FormModule } from '@shared/module/form.module';
 import { BlogInspectComponent } from 'src/app/features/blog-inspect/blog-inspect.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxModule } from '@shared/module/ngx.module';
 
 
 @NgModule({
@@ -25,7 +27,8 @@ import { BlogInspectComponent } from 'src/app/features/blog-inspect/blog-inspect
     FlexLayoutModule,
     MaterialModule,
     NgprimeModule,
-    FormModule
+    FormModule,
+    NgxModule
   ]
 })
 export class UserPageHolderModule { }

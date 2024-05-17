@@ -40,7 +40,6 @@ export class SidenavComponent implements OnInit {
 
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
-  this.labelData =  this.userService.getSingleRole() == 'ADMIN' ? NavbarConstant : StaffNavbarConstant
   }
 
 

@@ -42,7 +42,7 @@ const routes: Routes = [
   {path: ManagementRouteConstant.onsiteOrderManagement, component: OnsiteOrdersComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
   {path: ManagementRouteConstant.userManagementPayment, component: UserManagementPaymentComponent, canActivate:[AuthGuard], data: {roles:['STAFF', 'ADMIN']}},
   {path: ManagementRouteConstant.adminDashboard, component: AdminDashboardComponent, canActivate:[AuthGuard], data: {roles:['ADMIN', 'BLOGGER']}},
-  {path: ManagementRouteConstant.staffDashboard, component: StaffDashboardComponent, canActivate:[AuthGuard], data: {roles:['Blogger', 'ADMIN']}},
+  {path: ManagementRouteConstant.staffDashboard, component: StaffDashboardComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
   {path: ManagementRouteConstant.announcement, component: AnnouncementComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
   {path: ManagementRouteConstant.report, component: GenerateReportComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
   {path: ManagementRouteConstant.tableManagement, component: TableManagementBodyComponent, canActivate:[AuthGuard], data: {roles:['ADMIN']}},
